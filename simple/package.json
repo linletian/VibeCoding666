@@ -1,0 +1,16 @@
+{
+  "name": "vibecoding666-simple",
+  "version": "1.0.0",
+  "description": "VibeCoding666 - 轻量级屏幕软键盘 - 纯HTML/CSS/JS版本",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "install-deps": "npm install robotjs electron"
+  },
+  "dependencies": {
+    "robotjs": "^0.6.0"
+  },
+  "devDependencies": {
+    "electron": "^28.0.0"
+  }
+}

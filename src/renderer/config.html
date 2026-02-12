@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Keyboard Configuration</title>
+  <link rel="stylesheet" href="config.css">
+</head>
+<body>
+  <div class="config-container">
+    <header>
+      <h1>Keyboard Configuration</h1>
+      <div class="actions">
+        <button id="importBtn" class="btn btn-secondary">Import</button>
+        <button id="exportBtn" class="btn btn-secondary">Export</button>
+        <button id="resetBtn" class="btn btn-danger">Reset to Default</button>
+        <button id="addKeyBtn" class="btn btn-primary">Add Key</button>
+      </div>
+    </header>
+    
+    <div class="settings-section">
+      <h2>Global Settings</h2>
+      <div class="settings-grid">
+        <div class="setting-item">
+          <label for="opacity">Opacity</label>
+          <input type="range" id="opacity" min="0.5" max="1" step="0.05" value="0.95">
+          <span id="opacityValue">0.95</span>
+        </div>
+        <div class="setting-item">
+          <label for="alwaysOnTop">Always on Top</label>
+          <input type="checkbox" id="alwaysOnTop" checked>
+        </div>
+        <div class="setting-item">
+          <label for="showInTaskbar">Show in Taskbar</label>
+          <input type="checkbox" id="showInTaskbar">
+        </div>
+      </div>
+    </div>
+    
+    <div class="keys-section">
+      <h2>Keys</h2>
+      <div class="keys-grid" id="keysGrid"></div>
+    </div>
+  </div>
+  
+  <div class="modal" id="keyModal">
+    <div class="modal-content">
+      <h3 id="modalTitle">Edit Key</h3>
+      <form id="keyForm">
+        <input type="hidden" id="keyId">
+        <div class="form-group">
+          <label for="keyLabel">Display Label</label>
+          <input type="text" id="keyLabel" required>
+        </div>
+        <div class="form-group">
+          <label for="keyValue">Input Value</label>
+          <input type="text" id="keyValue" required>
+        </div>
+        <div class="form-group">
+          <label for="keyType">Type</label>
+          <select id="keyType">
+            <option value="text">Text</option>
+            <option value="special">Special Key</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="keyWidth">Width (1-5)</label>
+          <input type="number" id="keyWidth" min="1" max="5" value="1">
+        </div>
+        <div class="form-actions">
+          <button type="button" id="cancelBtn" class="btn btn-secondary">Cancel</button>
+          <button type="button" id="deleteBtn" class="btn btn-danger">Delete</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <script src="config.js"></script>
+</body>
+</html>
