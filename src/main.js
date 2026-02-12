@@ -255,8 +255,6 @@ class VibeCoding666 {
     this.configWindow = new BrowserWindow({
       width: 900,
       height: 700,
-      parent: this.mainWindow,
-      modal: false,
       webPreferences: {
         nodeIntegration: true,
         contextIsolation: false
@@ -329,6 +327,22 @@ class VibeCoding666 {
     });
 
     ipcMain.on('update-config', (event, newConfig) => {
+      if (newConfig.layout === 'horizontal') {
+        if (newConfig.position && newConfig.position !== 'top' && newConfig.position !== 'bottom') {
+          newConfig.position = 'bottom';
+        }
+      } else if (newConfig.layout === 'vertical') {
+        if (newConfig.position && newConfig.position !== 'left' && newConfig.position !== 'right') {
+          newConfig.position = 'right';
+        }
+      }
+
+      if (newConfig.position === 'top' || newConfig.position === 'bottom') {
+        newConfig.layout = 'horizontal';
+      } else if (newConfig.position === 'left' || newConfig.position === 'right') {
+        newConfig.layout = 'vertical';
+      }
+
       const needsResize = newConfig.layout && newConfig.layout !== this.config.layout;
       const needsReposition = newConfig.position && newConfig.position !== this.config.position;
 

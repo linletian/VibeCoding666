@@ -87,10 +87,24 @@ class ConfigUI {
     const showInTaskbarCheckbox = document.getElementById('showInTaskbar');
 
     layoutSelect.addEventListener('change', () => {
+      if (layoutSelect.value === 'horizontal') {
+        if (positionSelect.value !== 'top' && positionSelect.value !== 'bottom') {
+          positionSelect.value = 'bottom';
+        }
+      } else {
+        if (positionSelect.value !== 'left' && positionSelect.value !== 'right') {
+          positionSelect.value = 'right';
+        }
+      }
       this.saveSettings();
     });
 
     positionSelect.addEventListener('change', () => {
+      if (positionSelect.value === 'top' || positionSelect.value === 'bottom') {
+        layoutSelect.value = 'horizontal';
+      } else {
+        layoutSelect.value = 'vertical';
+      }
       this.saveSettings();
     });
 
