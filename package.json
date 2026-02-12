@@ -1,6 +1,6 @@
 {
   "name": "vibecoding666",
-  "version": "1.0.0",
+  "version": "0.2.1",
   "description": "VibeCoding666 - 跨平台屏幕软键盘，支持自定义按键内容",
   "main": "src/main.js",
   "scripts": {
