@@ -12,44 +12,43 @@ body {
 }
 
 .keyboard-container {
-  position: relative;
-  background: transparent;
-}
-
-.edge-trigger {
-  position: absolute;
-  background: transparent;
-  z-index: 1;
-}
-
-.keyboard-content {
   background: rgba(40, 40, 40, 0.95);
   border-radius: 12px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   overflow: hidden;
   backdrop-filter: blur(10px);
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition: all 0.3s ease;
 }
 
-.keyboard-container.hidden .keyboard-content {
+/* Collapsed state - thin bar */
+.keyboard-container.collapsed {
+  opacity: 0.3;
+}
+
+body.horizontal .keyboard-container.collapsed {
+  height: 12px;
+  overflow: hidden;
+}
+
+body.horizontal .keyboard-container.collapsed .title-bar,
+body.horizontal .keyboard-container.collapsed .keyboard-keys {
   opacity: 0;
   pointer-events: none;
 }
 
-.keyboard-container.hidden[data-position="top"] .keyboard-content {
-  transform: translateY(-100%);
+body.vertical .keyboard-container.collapsed {
+  width: 12px;
+  overflow: hidden;
 }
 
-.keyboard-container.hidden[data-position="bottom"] .keyboard-content {
-  transform: translateY(100%);
+body.vertical .keyboard-container.collapsed .title-bar,
+body.vertical .keyboard-container.collapsed .keyboard-keys {
+  opacity: 0;
+  pointer-events: none;
 }
 
-.keyboard-container.hidden[data-position="left"] .keyboard-content {
-  transform: translateX(-100%);
-}
-
-.keyboard-container.hidden[data-position="right"] .keyboard-content {
-  transform: translateX(100%);
+.keyboard-container.collapsed:hover {
+  opacity: 0.8;
 }
 
 .title-bar {
@@ -60,6 +59,7 @@ body {
   background: rgba(60, 60, 60, 0.9);
   cursor: move;
   -webkit-app-region: drag;
+  transition: opacity 0.3s ease;
 }
 
 .title {
@@ -108,21 +108,69 @@ body {
 
 .keyboard-keys {
   padding: 12px;
+  transition: opacity 0.3s ease;
+}
+
+/* Horizontal layout - single row */
+body.horizontal .keyboard-keys {
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+  flex-wrap: nowrap;
+  gap: 4px;
+  justify-content: flex-start;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding: 8px 12px;
+}
+
+body.horizontal .key-row {
+  display: flex;
+  gap: 4px;
+  flex-wrap: nowrap;
+}
+
+body.horizontal .key {
+  min-width: 36px;
+  height: 36px;
+  padding: 0 8px;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+body.horizontal .key.wide-2 {
+  min-width: 72px;
+}
+
+body.horizontal .key.wide-3 {
+  min-width: 108px;
+}
+
+/* Vertical layout - single column */
+body.vertical .keyboard-keys {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: stretch;
+  padding: 8px;
+}
+
+body.vertical .key-row {
+  display: flex;
   justify-content: center;
 }
 
+body.vertical .key {
+  min-width: 60px;
+  height: 36px;
+  padding: 0 8px;
+  font-size: 12px;
+}
+
+/* Common key styles */
 .key {
-  min-width: 48px;
-  height: 48px;
-  padding: 0 12px;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   background: linear-gradient(145deg, #4a4a4a, #3a3a3a);
   color: #fff;
-  font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   display: flex;
@@ -143,14 +191,6 @@ body {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
-.key.wide-2 {
-  min-width: 102px;
-}
-
-.key.wide-3 {
-  min-width: 156px;
-}
-
 .key.special {
   background: linear-gradient(145deg, #5c4a7a, #4a3a68);
 }
@@ -159,142 +199,26 @@ body {
   background: linear-gradient(145deg, #6c5a8a, #5a4a78);
 }
 
-.key-row {
-  display: flex;
-  gap: 6px;
-  justify-content: center;
-  width: 100%;
-}
-
-.dragging {
-  opacity: 0.8;
-}
-
-/* Vertical Layout */
-.keyboard-container.vertical .keyboard-content {
-  border-radius: 0 12px 12px 0;
-}
-
-.keyboard-container.vertical[data-position="left"] .keyboard-content {
-  border-radius: 0 12px 12px 0;
-}
-
-.keyboard-container.vertical[data-position="right"] .keyboard-content {
-  border-radius: 12px 0 0 12px;
-}
-
-.keyboard-container.vertical .keyboard-keys {
-  flex-direction: column;
-  flex-wrap: nowrap;
-  width: 80px;
-  padding: 8px;
-}
-
-.keyboard-container.vertical .key-row {
-  flex-direction: column;
-  width: 100%;
-}
-
-.keyboard-container.vertical .key {
-  min-width: auto;
-  width: 100%;
-  height: 40px;
-  font-size: 12px;
-  padding: 0 4px;
-}
-
-.keyboard-container.vertical .key.wide-2,
-.keyboard-container.vertical .key.wide-3 {
-  min-width: auto;
-  width: 100%;
-}
-
-.keyboard-container.vertical .title-bar {
-  padding: 6px 8px;
-}
-
-.keyboard-container.vertical .title {
-  font-size: 11px;
-}
-
-.keyboard-container.vertical .control-btn {
-  width: 20px;
-  height: 20px;
-  font-size: 12px;
-}
-
-/* Horizontal Layout */
-.keyboard-container.horizontal .keyboard-content {
-  border-radius: 12px 12px 0 0;
-}
-
-.keyboard-container.horizontal[data-position="top"] .keyboard-content {
+/* Position-based rounded corners */
+body.top .keyboard-container {
   border-radius: 0 0 12px 12px;
 }
 
-/* Edge Trigger Areas */
-.keyboard-container[data-position="top"] .edge-trigger {
-  bottom: -20px;
-  left: 0;
-  right: 0;
-  height: 20px;
+body.bottom .keyboard-container {
+  border-radius: 12px 12px 0 0;
 }
 
-.keyboard-container[data-position="bottom"] .edge-trigger {
-  top: -20px;
-  left: 0;
-  right: 0;
-  height: 20px;
+body.left .keyboard-container {
+  border-radius: 0 12px 12px 0;
 }
 
-.keyboard-container[data-position="left"] .edge-trigger {
-  right: -20px;
-  top: 0;
-  bottom: 0;
-  width: 20px;
+body.right .keyboard-container {
+  border-radius: 12px 0 0 12px;
 }
 
-.keyboard-container[data-position="right"] .edge-trigger {
-  left: -20px;
-  top: 0;
-  bottom: 0;
-  width: 20px;
-}
-
-/* Pin button */
-.pin-btn {
-  position: absolute;
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
-  color: #fff;
-  cursor: pointer;
-  font-size: 14px;
-  padding: 4px 8px;
-  border-radius: 4px;
-  opacity: 0.6;
-  transition: opacity 0.2s;
-  z-index: 10;
-}
-
-.pin-btn:hover {
-  opacity: 1;
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.pin-btn.pinned {
-  opacity: 1;
-  color: #4caf50;
-}
-
-.keyboard-container[data-position="top"] .pin-btn,
-.keyboard-container[data-position="bottom"] .pin-btn {
-  right: 80px;
-  top: 6px;
-}
-
-.keyboard-container.vertical .pin-btn {
-  right: 6px;
-  top: 80px;
+/* Dragging state */
+.dragging {
+  opacity: 0.8;
 }
 
 @media (prefers-color-scheme: light) {

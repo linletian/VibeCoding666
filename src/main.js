@@ -15,8 +15,8 @@ class VibeCoding666 {
     this.configWindow = null;
     this.configPath = path.join(app.getPath('userData'), 'vibecoding666-config.json');
     this.config = this.loadConfig();
-    this.isPinned = false;
     this.windowBounds = null;
+    this.isExpanded = true;
   }
 
   getDefaultConfig() {
@@ -97,19 +97,32 @@ class VibeCoding666 {
     }
   }
 
-  getWindowDimensions() {
+  getWindowDimensions(expanded = true) {
     const layout = this.config.layout || 'horizontal';
+    const primaryDisplay = screen.getPrimaryDisplay();
+    const { width: screenWidth, height: screenHeight } = primaryDisplay.workAreaSize;
 
-    if (layout === 'vertical') {
-      return { width: 100, height: 600 };
+    const horizontalWidth = Math.round(screenWidth * 0.9);
+    const verticalHeight = Math.round(screenHeight * 0.7);
+
+    if (expanded) {
+      if (layout === 'vertical') {
+        return { width: 80, height: verticalHeight };
+      }
+      return { width: horizontalWidth, height: 80 };
+    } else {
+      // Collapsed dimensions
+      if (layout === 'vertical') {
+        return { width: 12, height: verticalHeight };
+      }
+      return { width: horizontalWidth, height: 12 };
     }
-    return { width: 800, height: 300 };
   }
 
   getWindowPosition() {
     const primaryDisplay = screen.getPrimaryDisplay();
     const { width: screenWidth, height: screenHeight } = primaryDisplay.workAreaSize;
-    const { width, height } = this.getWindowDimensions();
+    const { width, height } = this.getWindowDimensions(this.isExpanded);
     const position = this.config.position || 'bottom';
 
     switch (position) {
@@ -127,7 +140,7 @@ class VibeCoding666 {
   }
 
   createMainWindow() {
-    const { width, height } = this.getWindowDimensions();
+    const { width, height } = this.getWindowDimensions(true);
     const { x, y } = this.getWindowPosition();
 
     this.mainWindow = new BrowserWindow({
@@ -160,70 +173,33 @@ class VibeCoding666 {
     });
 
     this.mainWindow.webContents.on('did-finish-load', () => {
+      this.windowBounds = { x, y, width, height };
+      this.mainWindow.setBounds(this.windowBounds);
+      this.mainWindow.show();
       this.mainWindow.webContents.send('config-loaded', this.config);
-
-      if (this.config.autoHide) {
-        this.showTriggerWindow();
-      } else {
-        this.mainWindow.show();
-      }
     });
+  }
 
+  expandWindow() {
+    if (!this.mainWindow) return;
+    this.isExpanded = true;
+    const { width, height } = this.getWindowDimensions(true);
+    const { x, y } = this.getWindowPosition();
     this.windowBounds = { x, y, width, height };
-  }
-
-  showTriggerWindow() {
-    if (!this.mainWindow) return;
-
-    const position = this.config.position || 'bottom';
-    const { width, height } = this.getWindowDimensions();
-    let triggerX = this.windowBounds.x;
-    let triggerY = this.windowBounds.y;
-    let triggerWidth = width;
-    let triggerHeight = height;
-
-    switch (position) {
-      case 'top':
-        triggerHeight = 5;
-        break;
-      case 'bottom':
-        triggerY = this.windowBounds.y + height - 5;
-        triggerHeight = 5;
-        break;
-      case 'left':
-        triggerWidth = 5;
-        break;
-      case 'right':
-        triggerX = this.windowBounds.x + width - 5;
-        triggerWidth = 5;
-        break;
-    }
-
-    this.mainWindow.setBounds({
-      x: triggerX,
-      y: triggerY,
-      width: triggerWidth,
-      height: triggerHeight
-    });
-
-    this.mainWindow.show();
-  }
-
-  showFullWindow() {
-    if (!this.mainWindow) return;
-
     this.mainWindow.setBounds(this.windowBounds);
-    this.mainWindow.setSize(this.windowBounds.width, this.windowBounds.height);
+    this.mainWindow.setSize(width, height);
+    this.mainWindow.webContents.send('expand-keyboard');
   }
 
-  hideToTrigger() {
-    if (!this.mainWindow || this.isPinned) return;
-
-    if (this.config.autoHide) {
-      setTimeout(() => {
-        this.showTriggerWindow();
-      }, 500);
-    }
+  collapseWindow() {
+    if (!this.mainWindow) return;
+    this.isExpanded = false;
+    const { width, height } = this.getWindowDimensions(false);
+    const { x, y } = this.getWindowPosition();
+    this.windowBounds = { x, y, width, height };
+    this.mainWindow.setBounds(this.windowBounds);
+    this.mainWindow.setSize(width, height);
+    this.mainWindow.webContents.send('collapse-keyboard');
   }
 
   snapToEdge() {
@@ -232,7 +208,7 @@ class VibeCoding666 {
     const primaryDisplay = screen.getPrimaryDisplay();
     const { width: screenWidth, height: screenHeight } = primaryDisplay.workAreaSize;
     const [currentX, currentY] = this.mainWindow.getPosition();
-    const { width, height } = this.getWindowDimensions();
+    const { width, height } = this.getWindowDimensions(true);
 
     const distances = {
       top: currentY,
@@ -251,18 +227,23 @@ class VibeCoding666 {
       }
     }
 
+    // Auto-switch layout based on edge
+    if (closestEdge === 'top' || closestEdge === 'bottom') {
+      this.config.layout = 'horizontal';
+    } else {
+      this.config.layout = 'vertical';
+    }
+
     this.config.position = closestEdge;
     this.saveConfig();
 
+    // Recalculate position with new layout
     const newPos = this.getWindowPosition();
-    this.windowBounds = { ...newPos, width, height };
-    this.mainWindow.setPosition(newPos.x, newPos.y);
+    const newDims = this.getWindowDimensions(this.isExpanded);
+    this.windowBounds = { ...newPos, width: newDims.width, height: newDims.height };
+    this.mainWindow.setBounds(this.windowBounds);
 
     this.mainWindow.webContents.send('config-loaded', this.config);
-
-    if (this.config.autoHide && !this.isPinned) {
-      this.showTriggerWindow();
-    }
   }
 
   createConfigWindow() {
@@ -359,17 +340,13 @@ class VibeCoding666 {
         this.mainWindow.setOpacity(this.config.opacity);
 
         if (needsResize || needsReposition) {
-          const { width, height } = this.getWindowDimensions();
+          const { width, height } = this.getWindowDimensions(this.isExpanded);
           const { x, y } = this.getWindowPosition();
           this.windowBounds = { x, y, width, height };
           this.mainWindow.setBounds(this.windowBounds);
         }
 
         this.mainWindow.webContents.send('config-loaded', this.config);
-
-        if (this.config.autoHide && !this.isPinned) {
-          this.showTriggerWindow();
-        }
       }
     });
 
@@ -385,11 +362,7 @@ class VibeCoding666 {
 
     ipcMain.on('minimize-keyboard', () => {
       if (this.mainWindow) {
-        if (this.config.autoHide && !this.isPinned) {
-          this.showTriggerWindow();
-        } else {
-          this.mainWindow.minimize();
-        }
+        this.collapseWindow();
       }
     });
 
@@ -404,15 +377,13 @@ class VibeCoding666 {
       this.snapToEdge();
     });
 
-    ipcMain.on('set-pinned', (event, pinned) => {
-      this.isPinned = pinned;
+    ipcMain.on('request-expand', () => {
+      this.expandWindow();
     });
 
-    ipcMain.on('keyboard-visibility', (event, visible) => {
-      if (visible) {
-        this.showFullWindow();
-      } else {
-        this.hideToTrigger();
+    ipcMain.on('request-collapse', () => {
+      if (this.config.autoHide !== false) {
+        this.collapseWindow();
       }
     });
 
@@ -447,7 +418,7 @@ class VibeCoding666 {
           this.saveConfig();
 
           if (this.mainWindow) {
-            const { width, height } = this.getWindowDimensions();
+            const { width, height } = this.getWindowDimensions(this.isExpanded);
             const { x, y } = this.getWindowPosition();
             this.windowBounds = { x, y, width, height };
             this.mainWindow.setBounds(this.windowBounds);
@@ -474,9 +445,6 @@ class VibeCoding666 {
           this.mainWindow.hide();
         } else {
           this.mainWindow.show();
-          if (this.config.autoHide && !this.isPinned) {
-            this.showFullWindow();
-          }
         }
       }
     });
