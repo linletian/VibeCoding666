@@ -145,6 +145,27 @@ body.horizontal .key.wide-3 {
 }
 
 /* Vertical layout - single column */
+body.vertical .title-bar {
+  flex-direction: row;
+  justify-content: center;
+  padding: 8px 4px;
+}
+
+body.vertical .title {
+  display: none;
+}
+
+body.vertical .window-controls {
+  flex-direction: row;
+  gap: 4px;
+}
+
+body.vertical .control-btn {
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+}
+
 body.vertical .keyboard-keys {
   display: flex;
   flex-direction: column;
