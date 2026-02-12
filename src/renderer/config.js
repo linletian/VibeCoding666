@@ -78,10 +78,25 @@ class ConfigUI {
   }
 
   setupSettingsListeners() {
+    const layoutSelect = document.getElementById('layout');
+    const positionSelect = document.getElementById('position');
+    const autoHideCheckbox = document.getElementById('autoHide');
     const opacitySlider = document.getElementById('opacity');
     const opacityValue = document.getElementById('opacityValue');
     const alwaysOnTopCheckbox = document.getElementById('alwaysOnTop');
     const showInTaskbarCheckbox = document.getElementById('showInTaskbar');
+
+    layoutSelect.addEventListener('change', () => {
+      this.saveSettings();
+    });
+
+    positionSelect.addEventListener('change', () => {
+      this.saveSettings();
+    });
+
+    autoHideCheckbox.addEventListener('change', () => {
+      this.saveSettings();
+    });
 
     let debounceTimer;
     opacitySlider.addEventListener('input', () => {
@@ -103,7 +118,10 @@ class ConfigUI {
 
   updateSettingsUI() {
     if (!this.config) return;
-    
+
+    document.getElementById('layout').value = this.config.layout || 'horizontal';
+    document.getElementById('position').value = this.config.position || 'bottom';
+    document.getElementById('autoHide').checked = this.config.autoHide !== false;
     document.getElementById('opacity').value = this.config.opacity || 0.95;
     document.getElementById('opacityValue').textContent = this.config.opacity || 0.95;
     document.getElementById('alwaysOnTop').checked = this.config.alwaysOnTop !== false;
@@ -112,11 +130,14 @@ class ConfigUI {
 
   saveSettings() {
     const newConfig = {
+      layout: document.getElementById('layout').value,
+      position: document.getElementById('position').value,
+      autoHide: document.getElementById('autoHide').checked,
       opacity: parseFloat(document.getElementById('opacity').value),
       alwaysOnTop: document.getElementById('alwaysOnTop').checked,
       showInTaskbar: document.getElementById('showInTaskbar').checked
     };
-    
+
     ipcRenderer.send('update-config', newConfig);
     this.showNotification('Settings saved');
   }

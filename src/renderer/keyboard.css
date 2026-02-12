@@ -17,6 +17,38 @@ body {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   overflow: hidden;
   backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+/* Collapsed state - thin bar */
+.keyboard-container.collapsed {
+  opacity: 0.3;
+}
+
+body.horizontal .keyboard-container.collapsed {
+  height: 12px;
+  overflow: hidden;
+}
+
+body.horizontal .keyboard-container.collapsed .title-bar,
+body.horizontal .keyboard-container.collapsed .keyboard-keys {
+  opacity: 0;
+  pointer-events: none;
+}
+
+body.vertical .keyboard-container.collapsed {
+  width: 12px;
+  overflow: hidden;
+}
+
+body.vertical .keyboard-container.collapsed .title-bar,
+body.vertical .keyboard-container.collapsed .keyboard-keys {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.keyboard-container.collapsed:hover {
+  opacity: 0.8;
 }
 
 .title-bar {
@@ -27,6 +59,7 @@ body {
   background: rgba(60, 60, 60, 0.9);
   cursor: move;
   -webkit-app-region: drag;
+  transition: opacity 0.3s ease;
 }
 
 .title {
@@ -75,21 +108,69 @@ body {
 
 .keyboard-keys {
   padding: 12px;
+  transition: opacity 0.3s ease;
+}
+
+/* Horizontal layout - single row */
+body.horizontal .keyboard-keys {
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+  flex-wrap: nowrap;
+  gap: 4px;
+  justify-content: flex-start;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding: 8px 12px;
+}
+
+body.horizontal .key-row {
+  display: flex;
+  gap: 4px;
+  flex-wrap: nowrap;
+}
+
+body.horizontal .key {
+  min-width: 36px;
+  height: 36px;
+  padding: 0 8px;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+body.horizontal .key.wide-2 {
+  min-width: 72px;
+}
+
+body.horizontal .key.wide-3 {
+  min-width: 108px;
+}
+
+/* Vertical layout - single column */
+body.vertical .keyboard-keys {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: stretch;
+  padding: 8px;
+}
+
+body.vertical .key-row {
+  display: flex;
   justify-content: center;
 }
 
+body.vertical .key {
+  min-width: 60px;
+  height: 36px;
+  padding: 0 8px;
+  font-size: 12px;
+}
+
+/* Common key styles */
 .key {
-  min-width: 48px;
-  height: 48px;
-  padding: 0 12px;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   background: linear-gradient(145deg, #4a4a4a, #3a3a3a);
   color: #fff;
-  font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   display: flex;
@@ -110,14 +191,6 @@ body {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
-.key.wide-2 {
-  min-width: 102px;
-}
-
-.key.wide-3 {
-  min-width: 156px;
-}
-
 .key.special {
   background: linear-gradient(145deg, #5c4a7a, #4a3a68);
 }
@@ -126,13 +199,24 @@ body {
   background: linear-gradient(145deg, #6c5a8a, #5a4a78);
 }
 
-.key-row {
-  display: flex;
-  gap: 6px;
-  justify-content: center;
-  width: 100%;
+/* Position-based rounded corners */
+body.top .keyboard-container {
+  border-radius: 0 0 12px 12px;
 }
 
+body.bottom .keyboard-container {
+  border-radius: 12px 12px 0 0;
+}
+
+body.left .keyboard-container {
+  border-radius: 0 12px 12px 0;
+}
+
+body.right .keyboard-container {
+  border-radius: 12px 0 0 12px;
+}
+
+/* Dragging state */
 .dragging {
   opacity: 0.8;
 }

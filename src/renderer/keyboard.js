@@ -3,19 +3,29 @@ const { ipcRenderer } = require('electron');
 class KeyboardUI {
   constructor() {
     this.config = null;
+    this.container = document.getElementById('keyboardContainer');
     this.keysContainer = document.getElementById('keyboardKeys');
-    this.titleBar = document.getElementById('titleBar');
-    this.isDragging = false;
-    this.dragOffset = { x: 0, y: 0 };
-    
+    this.isExpanded = true;
+    this.mouseInWindow = false;
+    this.hideTimeout = null;
+
     this.setupEventListeners();
-    this.setupDragHandlers();
+    this.setupMouseHandlers();
   }
 
   setupEventListeners() {
     ipcRenderer.on('config-loaded', (event, config) => {
       this.config = config;
+      this.applyLayout();
       this.renderKeys();
+    });
+
+    ipcRenderer.on('expand-keyboard', () => {
+      this.expand();
+    });
+
+    ipcRenderer.on('collapse-keyboard', () => {
+      this.collapse();
     });
 
     document.getElementById('minimizeBtn').addEventListener('click', () => {
@@ -37,84 +47,137 @@ class KeyboardUI {
     });
   }
 
-  setupDragHandlers() {
-    this.titleBar.addEventListener('mousedown', (e) => {
-      if (e.target.closest('.window-controls')) return;
-      this.isDragging = true;
-      this.dragOffset.x = e.screenX;
-      this.dragOffset.y = e.screenY;
-      document.body.classList.add('dragging');
+  setupMouseHandlers() {
+    this.container.addEventListener('mouseenter', () => {
+      this.mouseInWindow = true;
+      if (this.hideTimeout) {
+        clearTimeout(this.hideTimeout);
+        this.hideTimeout = null;
+      }
+      if (!this.isExpanded) {
+        ipcRenderer.send('request-expand');
+      }
     });
 
-    document.addEventListener('mousemove', (e) => {
-      if (!this.isDragging) return;
-      
-      const deltaX = e.screenX - this.dragOffset.x;
-      const deltaY = e.screenY - this.dragOffset.y;
-      
-      ipcRenderer.send('move-window', { x: deltaX, y: deltaY });
-      
-      this.dragOffset.x = e.screenX;
-      this.dragOffset.y = e.screenY;
+    this.container.addEventListener('mouseleave', () => {
+      this.mouseInWindow = false;
+      if (this.isExpanded && this.config && this.config.autoHide !== false) {
+        this.scheduleCollapse();
+      }
     });
+  }
 
-    document.addEventListener('mouseup', () => {
-      this.isDragging = false;
-      document.body.classList.remove('dragging');
-    });
+  scheduleCollapse() {
+    if (this.hideTimeout) {
+      clearTimeout(this.hideTimeout);
+    }
+    this.hideTimeout = setTimeout(() => {
+      if (!this.mouseInWindow && this.isExpanded) {
+        ipcRenderer.send('request-collapse');
+      }
+    }, 1000);
+  }
+
+  expand() {
+    this.isExpanded = true;
+    this.container.classList.remove('collapsed');
+    this.container.classList.add('expanded');
+  }
+
+  collapse() {
+    this.isExpanded = false;
+    this.container.classList.remove('expanded');
+    this.container.classList.add('collapsed');
+  }
+
+  applyLayout() {
+    if (!this.config) return;
+
+    const layout = this.config.layout || 'horizontal';
+    const position = this.config.position || 'bottom';
+
+    document.body.classList.remove('horizontal', 'vertical', 'top', 'bottom', 'left', 'right');
+    document.body.classList.add(layout, position);
   }
 
   renderKeys() {
     if (!this.config || !this.config.keys) return;
-    
+
     this.keysContainer.innerHTML = '';
-    
-    const row1 = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
-    const row2 = ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'];
-    const row3 = ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'];
-    const row4 = ['z', 'x', 'c', 'v', 'b', 'n', 'm'];
-    const row5 = ['email', 'phone', 'dot', 'comma', 'question', 'exclaim', 'space', 'backspace', 'enter'];
-    
-    this.renderKeyRow(row1);
-    this.renderKeyRow(row2);
-    this.renderKeyRow(row3);
-    this.renderKeyRow(row4);
-    this.renderKeyRow(row5);
+
+    const layout = this.config.layout || 'horizontal';
+
+    if (layout === 'horizontal') {
+      this.renderHorizontalSingleRow();
+    } else {
+      this.renderVerticalSingleColumn();
+    }
   }
 
-  renderKeyRow(keyIds) {
+  renderHorizontalSingleRow() {
     const row = document.createElement('div');
     row.className = 'key-row';
-    
-    keyIds.forEach(id => {
+
+    const keyOrder = [
+      '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
+      'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p',
+      'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l',
+      'z', 'x', 'c', 'v', 'b', 'n', 'm',
+      'email', 'phone', 'dot', 'comma', 'question', 'exclaim',
+      'space', 'backspace', 'enter'
+    ];
+
+    keyOrder.forEach(id => {
       const keyData = this.config.keys.find(k => k.id === id);
       if (keyData) {
         const keyButton = this.createKeyButton(keyData);
         row.appendChild(keyButton);
       }
     });
-    
+
     this.keysContainer.appendChild(row);
+  }
+
+  renderVerticalSingleColumn() {
+    const keyOrder = [
+      '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
+      'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p',
+      'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l',
+      'z', 'x', 'c', 'v', 'b', 'n', 'm',
+      'email', 'phone', 'dot', 'comma', 'question', 'exclaim',
+      'space', 'backspace', 'enter'
+    ];
+
+    keyOrder.forEach(id => {
+      const keyData = this.config.keys.find(k => k.id === id);
+      if (keyData) {
+        const row = document.createElement('div');
+        row.className = 'key-row';
+        const keyButton = this.createKeyButton(keyData);
+        row.appendChild(keyButton);
+        this.keysContainer.appendChild(row);
+      }
+    });
   }
 
   createKeyButton(keyData) {
     const button = document.createElement('button');
     button.className = 'key';
     button.textContent = keyData.label;
-    
+
     if (keyData.width && keyData.width > 1) {
       button.classList.add(`wide-${keyData.width}`);
     }
-    
+
     if (keyData.type === 'special') {
       button.classList.add('special');
     }
-    
+
     button.addEventListener('click', () => {
       this.animateKeyPress(button);
       ipcRenderer.send('key-pressed', keyData);
     });
-    
+
     return button;
   }
 

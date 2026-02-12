@@ -8,7 +8,7 @@
 <body>
   <div class="config-container">
     <header>
-      <h1>Keyboard Configuration</h1>
+      <h1>VibeCoding666 Configuration</h1>
       <div class="actions">
         <button id="importBtn" class="btn btn-secondary">Import</button>
         <button id="exportBtn" class="btn btn-secondary">Export</button>
@@ -20,6 +20,26 @@
     <div class="settings-section">
       <h2>Global Settings</h2>
       <div class="settings-grid">
+        <div class="setting-item">
+          <label for="layout">Layout</label>
+          <select id="layout">
+            <option value="horizontal">Horizontal</option>
+            <option value="vertical">Vertical</option>
+          </select>
+        </div>
+        <div class="setting-item">
+          <label for="position">Position</label>
+          <select id="position">
+            <option value="top">Top</option>
+            <option value="bottom">Bottom</option>
+            <option value="left">Left</option>
+            <option value="right">Right</option>
+          </select>
+        </div>
+        <div class="setting-item">
+          <label for="autoHide">Auto Hide</label>
+          <input type="checkbox" id="autoHide" checked>
+        </div>
         <div class="setting-item">
           <label for="opacity">Opacity</label>
           <input type="range" id="opacity" min="0.5" max="1" step="0.05" value="0.95">
