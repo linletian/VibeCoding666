@@ -15,6 +15,8 @@ class VibeCoding666 {
     this.configWindow = null;
     this.configPath = path.join(app.getPath('userData'), 'vibecoding666-config.json');
     this.config = this.loadConfig();
+    this.isPinned = false;
+    this.windowBounds = null;
   }
 
   getDefaultConfig() {
@@ -66,7 +68,9 @@ class VibeCoding666 {
         { id: 'question', label: '?', value: '?', type: 'text' },
         { id: 'exclaim', label: '!', value: '!', type: 'text' },
       ],
-      layout: 'standard',
+      layout: 'horizontal',
+      position: 'bottom',
+      autoHide: true,
       opacity: 0.95,
       alwaysOnTop: true,
       showInTaskbar: false
@@ -93,15 +97,44 @@ class VibeCoding666 {
     }
   }
 
-  createMainWindow() {
+  getWindowDimensions() {
+    const layout = this.config.layout || 'horizontal';
+
+    if (layout === 'vertical') {
+      return { width: 100, height: 600 };
+    }
+    return { width: 800, height: 300 };
+  }
+
+  getWindowPosition() {
     const primaryDisplay = screen.getPrimaryDisplay();
-    const { width, height } = primaryDisplay.workAreaSize;
+    const { width: screenWidth, height: screenHeight } = primaryDisplay.workAreaSize;
+    const { width, height } = this.getWindowDimensions();
+    const position = this.config.position || 'bottom';
+
+    switch (position) {
+      case 'top':
+        return { x: Math.round((screenWidth - width) / 2), y: 0 };
+      case 'bottom':
+        return { x: Math.round((screenWidth - width) / 2), y: screenHeight - height };
+      case 'left':
+        return { x: 0, y: Math.round((screenHeight - height) / 2) };
+      case 'right':
+        return { x: screenWidth - width, y: Math.round((screenHeight - height) / 2) };
+      default:
+        return { x: Math.round((screenWidth - width) / 2), y: screenHeight - height };
+    }
+  }
+
+  createMainWindow() {
+    const { width, height } = this.getWindowDimensions();
+    const { x, y } = this.getWindowPosition();
 
     this.mainWindow = new BrowserWindow({
-      width: 800,
-      height: 300,
-      x: Math.round((width - 800) / 2),
-      y: height - 320,
+      width,
+      height,
+      x,
+      y,
       frame: false,
       transparent: true,
       alwaysOnTop: this.config.alwaysOnTop,
@@ -116,7 +149,8 @@ class VibeCoding666 {
         contextIsolation: false,
         enableRemoteModule: true
       },
-      opacity: this.config.opacity
+      opacity: this.config.opacity,
+      show: false
     });
 
     this.mainWindow.loadFile(path.join(__dirname, 'renderer', 'keyboard.html'));
@@ -127,7 +161,108 @@ class VibeCoding666 {
 
     this.mainWindow.webContents.on('did-finish-load', () => {
       this.mainWindow.webContents.send('config-loaded', this.config);
+
+      if (this.config.autoHide) {
+        this.showTriggerWindow();
+      } else {
+        this.mainWindow.show();
+      }
     });
+
+    this.windowBounds = { x, y, width, height };
+  }
+
+  showTriggerWindow() {
+    if (!this.mainWindow) return;
+
+    const position = this.config.position || 'bottom';
+    const { width, height } = this.getWindowDimensions();
+    let triggerX = this.windowBounds.x;
+    let triggerY = this.windowBounds.y;
+    let triggerWidth = width;
+    let triggerHeight = height;
+
+    switch (position) {
+      case 'top':
+        triggerHeight = 5;
+        break;
+      case 'bottom':
+        triggerY = this.windowBounds.y + height - 5;
+        triggerHeight = 5;
+        break;
+      case 'left':
+        triggerWidth = 5;
+        break;
+      case 'right':
+        triggerX = this.windowBounds.x + width - 5;
+        triggerWidth = 5;
+        break;
+    }
+
+    this.mainWindow.setBounds({
+      x: triggerX,
+      y: triggerY,
+      width: triggerWidth,
+      height: triggerHeight
+    });
+
+    this.mainWindow.show();
+  }
+
+  showFullWindow() {
+    if (!this.mainWindow) return;
+
+    this.mainWindow.setBounds(this.windowBounds);
+    this.mainWindow.setSize(this.windowBounds.width, this.windowBounds.height);
+  }
+
+  hideToTrigger() {
+    if (!this.mainWindow || this.isPinned) return;
+
+    if (this.config.autoHide) {
+      setTimeout(() => {
+        this.showTriggerWindow();
+      }, 500);
+    }
+  }
+
+  snapToEdge() {
+    if (!this.mainWindow) return;
+
+    const primaryDisplay = screen.getPrimaryDisplay();
+    const { width: screenWidth, height: screenHeight } = primaryDisplay.workAreaSize;
+    const [currentX, currentY] = this.mainWindow.getPosition();
+    const { width, height } = this.getWindowDimensions();
+
+    const distances = {
+      top: currentY,
+      bottom: screenHeight - (currentY + height),
+      left: currentX,
+      right: screenWidth - (currentX + width)
+    };
+
+    let closestEdge = 'bottom';
+    let minDistance = distances.bottom;
+
+    for (const [edge, distance] of Object.entries(distances)) {
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestEdge = edge;
+      }
+    }
+
+    this.config.position = closestEdge;
+    this.saveConfig();
+
+    const newPos = this.getWindowPosition();
+    this.windowBounds = { ...newPos, width, height };
+    this.mainWindow.setPosition(newPos.x, newPos.y);
+
+    this.mainWindow.webContents.send('config-loaded', this.config);
+
+    if (this.config.autoHide && !this.isPinned) {
+      this.showTriggerWindow();
+    }
   }
 
   createConfigWindow() {
@@ -164,7 +299,7 @@ class VibeCoding666 {
       console.error('robotjs not available');
       return;
     }
-    
+
     try {
       robot.typeString(text);
     } catch (error) {
@@ -177,7 +312,7 @@ class VibeCoding666 {
       console.error('robotjs not available');
       return;
     }
-    
+
     try {
       const keyMap = {
         'backspace': 'backspace',
@@ -194,7 +329,7 @@ class VibeCoding666 {
         'left': 'left',
         'right': 'right'
       };
-      
+
       if (keyMap[key]) {
         robot.keyTap(keyMap[key]);
       }
@@ -213,12 +348,28 @@ class VibeCoding666 {
     });
 
     ipcMain.on('update-config', (event, newConfig) => {
+      const needsResize = newConfig.layout && newConfig.layout !== this.config.layout;
+      const needsReposition = newConfig.position && newConfig.position !== this.config.position;
+
       this.config = { ...this.config, ...newConfig };
       this.saveConfig();
+
       if (this.mainWindow) {
         this.mainWindow.setAlwaysOnTop(this.config.alwaysOnTop);
         this.mainWindow.setOpacity(this.config.opacity);
+
+        if (needsResize || needsReposition) {
+          const { width, height } = this.getWindowDimensions();
+          const { x, y } = this.getWindowPosition();
+          this.windowBounds = { x, y, width, height };
+          this.mainWindow.setBounds(this.windowBounds);
+        }
+
         this.mainWindow.webContents.send('config-loaded', this.config);
+
+        if (this.config.autoHide && !this.isPinned) {
+          this.showTriggerWindow();
+        }
       }
     });
 
@@ -234,7 +385,11 @@ class VibeCoding666 {
 
     ipcMain.on('minimize-keyboard', () => {
       if (this.mainWindow) {
-        this.mainWindow.minimize();
+        if (this.config.autoHide && !this.isPinned) {
+          this.showTriggerWindow();
+        } else {
+          this.mainWindow.minimize();
+        }
       }
     });
 
@@ -245,16 +400,32 @@ class VibeCoding666 {
       }
     });
 
+    ipcMain.on('snap-to-edge', () => {
+      this.snapToEdge();
+    });
+
+    ipcMain.on('set-pinned', (event, pinned) => {
+      this.isPinned = pinned;
+    });
+
+    ipcMain.on('keyboard-visibility', (event, visible) => {
+      if (visible) {
+        this.showFullWindow();
+      } else {
+        this.hideToTrigger();
+      }
+    });
+
     ipcMain.on('get-config', (event) => {
       event.reply('config-loaded', this.config);
     });
 
     ipcMain.handle('export-config', async () => {
       const result = await dialog.showSaveDialog(this.configWindow || this.mainWindow, {
-        defaultPath: 'keyboard-config.json',
+        defaultPath: 'vibecoding666-config.json',
         filters: [{ name: 'JSON', extensions: ['json'] }]
       });
-      
+
       if (!result.canceled) {
         fs.writeFileSync(result.filePath, JSON.stringify(this.config, null, 2));
         return { success: true };
@@ -267,19 +438,26 @@ class VibeCoding666 {
         filters: [{ name: 'JSON', extensions: ['json'] }],
         properties: ['openFile']
       });
-      
+
       if (!result.canceled && result.filePaths.length > 0) {
         try {
           const data = fs.readFileSync(result.filePaths[0], 'utf8');
           const importedConfig = JSON.parse(data);
           this.config = { ...this.getDefaultConfig(), ...importedConfig };
           this.saveConfig();
+
           if (this.mainWindow) {
+            const { width, height } = this.getWindowDimensions();
+            const { x, y } = this.getWindowPosition();
+            this.windowBounds = { x, y, width, height };
+            this.mainWindow.setBounds(this.windowBounds);
             this.mainWindow.webContents.send('config-loaded', this.config);
           }
+
           if (this.configWindow) {
             this.configWindow.webContents.send('config-loaded', this.config);
           }
+
           return { success: true };
         } catch (error) {
           return { success: false, error: error.message };
@@ -296,7 +474,9 @@ class VibeCoding666 {
           this.mainWindow.hide();
         } else {
           this.mainWindow.show();
-          this.mainWindow.focus();
+          if (this.config.autoHide && !this.isPinned) {
+            this.showFullWindow();
+          }
         }
       }
     });

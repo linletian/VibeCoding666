@@ -12,11 +12,44 @@ body {
 }
 
 .keyboard-container {
+  position: relative;
+  background: transparent;
+}
+
+.edge-trigger {
+  position: absolute;
+  background: transparent;
+  z-index: 1;
+}
+
+.keyboard-content {
   background: rgba(40, 40, 40, 0.95);
   border-radius: 12px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   overflow: hidden;
   backdrop-filter: blur(10px);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.keyboard-container.hidden .keyboard-content {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.keyboard-container.hidden[data-position="top"] .keyboard-content {
+  transform: translateY(-100%);
+}
+
+.keyboard-container.hidden[data-position="bottom"] .keyboard-content {
+  transform: translateY(100%);
+}
+
+.keyboard-container.hidden[data-position="left"] .keyboard-content {
+  transform: translateX(-100%);
+}
+
+.keyboard-container.hidden[data-position="right"] .keyboard-content {
+  transform: translateX(100%);
 }
 
 .title-bar {
@@ -135,6 +168,133 @@ body {
 
 .dragging {
   opacity: 0.8;
+}
+
+/* Vertical Layout */
+.keyboard-container.vertical .keyboard-content {
+  border-radius: 0 12px 12px 0;
+}
+
+.keyboard-container.vertical[data-position="left"] .keyboard-content {
+  border-radius: 0 12px 12px 0;
+}
+
+.keyboard-container.vertical[data-position="right"] .keyboard-content {
+  border-radius: 12px 0 0 12px;
+}
+
+.keyboard-container.vertical .keyboard-keys {
+  flex-direction: column;
+  flex-wrap: nowrap;
+  width: 80px;
+  padding: 8px;
+}
+
+.keyboard-container.vertical .key-row {
+  flex-direction: column;
+  width: 100%;
+}
+
+.keyboard-container.vertical .key {
+  min-width: auto;
+  width: 100%;
+  height: 40px;
+  font-size: 12px;
+  padding: 0 4px;
+}
+
+.keyboard-container.vertical .key.wide-2,
+.keyboard-container.vertical .key.wide-3 {
+  min-width: auto;
+  width: 100%;
+}
+
+.keyboard-container.vertical .title-bar {
+  padding: 6px 8px;
+}
+
+.keyboard-container.vertical .title {
+  font-size: 11px;
+}
+
+.keyboard-container.vertical .control-btn {
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+}
+
+/* Horizontal Layout */
+.keyboard-container.horizontal .keyboard-content {
+  border-radius: 12px 12px 0 0;
+}
+
+.keyboard-container.horizontal[data-position="top"] .keyboard-content {
+  border-radius: 0 0 12px 12px;
+}
+
+/* Edge Trigger Areas */
+.keyboard-container[data-position="top"] .edge-trigger {
+  bottom: -20px;
+  left: 0;
+  right: 0;
+  height: 20px;
+}
+
+.keyboard-container[data-position="bottom"] .edge-trigger {
+  top: -20px;
+  left: 0;
+  right: 0;
+  height: 20px;
+}
+
+.keyboard-container[data-position="left"] .edge-trigger {
+  right: -20px;
+  top: 0;
+  bottom: 0;
+  width: 20px;
+}
+
+.keyboard-container[data-position="right"] .edge-trigger {
+  left: -20px;
+  top: 0;
+  bottom: 0;
+  width: 20px;
+}
+
+/* Pin button */
+.pin-btn {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+  z-index: 10;
+}
+
+.pin-btn:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.pin-btn.pinned {
+  opacity: 1;
+  color: #4caf50;
+}
+
+.keyboard-container[data-position="top"] .pin-btn,
+.keyboard-container[data-position="bottom"] .pin-btn {
+  right: 80px;
+  top: 6px;
+}
+
+.keyboard-container.vertical .pin-btn {
+  right: 6px;
+  top: 80px;
 }
 
 @media (prefers-color-scheme: light) {
