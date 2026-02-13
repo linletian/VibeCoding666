@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.3.2] - 2026-02-13
 
+## [0.3.3] - 2026-02-13
+
+### Added
+
+- JS 驱动的拖拽支持：为水平/垂直布局添加了拖拽监听器与 `window-drag` IPC，用于更平滑的鼠标拖动移动
+
+### Changed
+
+- 改进窗口尺寸与位置计算：展开/收起尺寸会根据 `position` 与按键数量自适应，展开/收起时尽量保持锚点不变
+- 将拖拽从 CSS `-webkit-app-region: drag` 切换为 JS 控制的拖拽，更新了相关游标样式和控制按钮布局
+- 为水平和垂直布局添加细窄滚动条样式以提升视觉一致性
+- 在主进程中增加 `setWindowBoundsWithEdgeCorrection()` 方法以保证窗口不会超出工作区
+
+### Fixed
+
+- 修正吸附到屏幕边缘时的定位计算，避免在多显示器或非零工作区坐标下出现位置偏移或闪烁
+
+### Technical
+
+- 新增 `window-drag` IPC 事件与 `attachDragListeners()` 的实现，主进程增加边界校正与拖动处理逻辑
+- 移除部分 CSS 上的 `-webkit-app-region: drag`，改由渲染进程发送拖拽增量到主进程处理
+
+
 ### Added
 
 - Split keyboard.html into separate horizontal and vertical layout files for better maintainability
@@ -118,6 +141,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Basic horizontal keyboard layout with multiple rows
 
 [0.3.2]: https://github.com/yourusername/vibecoding666/compare/v0.3.1...v0.3.2
+[0.3.3]: https://github.com/yourusername/vibecoding666/compare/v0.3.2...v0.3.3
 [0.3.1]: https://github.com/yourusername/vibecoding666/compare/v0.3.0...v0.3.1
 [0.2.1]: https://github.com/yourusername/vibecoding666/compare/v0.2.0...v0.2.1
 [0.3.0]: https://github.com/yourusername/vibecoding666/compare/v0.2.1...v0.3.0

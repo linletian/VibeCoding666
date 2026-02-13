@@ -52,9 +52,13 @@ body {
   padding: 0 12px;
   height: 32px;
   background: transparent;
-  cursor: move;
-  -webkit-app-region: drag;
+  cursor: grab;
+  /* -webkit-app-region: drag; Removed for JS controlled dragging */
   flex-shrink: 0;
+}
+
+.title-section:active {
+  cursor: grabbing;
 }
 
 .title-text {
@@ -66,15 +70,25 @@ body {
 
 .controls-section {
   display: flex;
-  gap: 4px;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1px;
   flex-shrink: 0;
   -webkit-app-region: no-drag;
+  margin-left: 4px;
+  height: 36px; /* Match key height */
+  padding: 0;
 }
 
 .controls-section .control-btn {
-  width: 32px;
-  height: 32px;
-  font-size: 14px;
+  width: 14px;
+  height: 11px; /* 36px / 3 - gaps */
+  font-size: 8px;
+  border-radius: 2px;
+  line-height: 11px;
+  padding: 0;
+  min-height: 0;
+  margin: 0;
 }
 
 .control-btn {
@@ -118,6 +132,24 @@ body {
   padding: 0;
   flex: 1;
   min-width: 0;
+}
+
+/* Slim scrollbar */
+.keyboard-keys::-webkit-scrollbar {
+  height: 4px;
+}
+
+.keyboard-keys::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.keyboard-keys::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.keyboard-keys::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
 }
 
 .key-row {

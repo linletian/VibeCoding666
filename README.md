@@ -1,10 +1,12 @@
 # VibeCoding666
 
+**Current release: v0.3.3**
+
 这是一个严肃的抽象搞笑项目！但是笑归笑，闹归闹，别拿 Vibe Coding 当玩笑！
 
 一个专门为 Vibe Coding 设计的屏幕软键盘快捷键，灵感来源一位小红书博主求 Vibe Coding 快捷键盘。本项目可以鼠标一键输入“帮我修 bug”、“继续修 bug”、“中文回答我！”、“直接写代码”等常用 Vibe Coding 对话内容。所有按键内容也都可以自定义。
 
-当然，本项目也是使用 Vibe Coding 方式设计的。除了 README 里这三段简介。
+项目取名 VibeCoding666 是祝福大家在 Vibe Coding 过程中全程 666。本项目也是全程使用 Vibe Coding 方式开发的，包括架构选型。嗯…… 除了 README 里这三段简介。
 
 ## 快速开始
 

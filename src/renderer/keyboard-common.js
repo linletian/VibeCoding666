@@ -7,10 +7,85 @@ class KeyboardUI {
     this.keysContainer = document.getElementById('keyboardKeys');
     this.isExpanded = true;
     this.mouseInWindow = false;
+    this.isDragging = false;
     this.hideTimeout = null;
 
     this.setupEventListeners();
     this.setupMouseHandlers();
+    this.setupDragHandlers();
+  }
+
+  setupDragHandlers() {
+    // 识别不同布局的拖拽区域
+    // Horizontal layout uses .title-section
+    const titleSection = document.querySelector('.title-section');
+    // Vertical layout uses .controls-top
+    const controlsTop = document.querySelector('.controls-top');
+    
+    const dragTarget = titleSection || controlsTop;
+    
+    if (dragTarget) {
+      this.attachDragListeners(dragTarget);
+    }
+  }
+
+  attachDragListeners(element) {
+    let startX = 0;
+    let startY = 0;
+
+    const onMouseDown = (e) => {
+      // 忽略在按钮上的点击
+      if (e.target.tagName === 'BUTTON' || e.target.closest('button')) return;
+
+      this.isDragging = true;
+      
+      // 拖动开始时，清除隐藏计时器
+      if (this.hideTimeout) {
+        clearTimeout(this.hideTimeout);
+        this.hideTimeout = null;
+      }
+
+      // 如果当前是折叠状态，强制展开
+      if (!this.isExpanded) {
+        ipcRenderer.send('request-expand');
+      }
+
+      startX = e.screenX;
+      startY = e.screenY;
+      
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
+      
+      // 添加 dragging 类以更改光标等样式
+      document.body.classList.add('dragging');
+    };
+
+    const onMouseMove = (e) => {
+      if (!this.isDragging) return;
+      
+      const deltaX = e.screenX - startX;
+      const deltaY = e.screenY - startY;
+      
+      if (deltaX !== 0 || deltaY !== 0) {
+        ipcRenderer.send('window-drag', { deltaX, deltaY });
+        startX = e.screenX;
+        startY = e.screenY;
+      }
+    };
+
+    const onMouseUp = () => {
+      this.isDragging = false;
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+      document.body.classList.remove('dragging');
+
+      // 拖拽结束后，如果鼠标不在窗口内，重新计划收起
+      if (!this.mouseInWindow && this.isExpanded && this.config && this.config.autoHide !== false) {
+        this.scheduleCollapse();
+      }
+    };
+
+    element.addEventListener('mousedown', onMouseDown);
   }
 
   setupEventListeners() {
@@ -71,6 +146,9 @@ class KeyboardUI {
 
     this.container.addEventListener('mouseleave', () => {
       this.mouseInWindow = false;
+      // 拖拽过程中不要触发收起
+      if (this.isDragging) return;
+
       if (this.isExpanded && this.config && this.config.autoHide !== false) {
         this.scheduleCollapse();
       }
