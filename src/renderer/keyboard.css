@@ -62,6 +62,11 @@ body.vertical .keyboard-container.collapsed .keyboard-keys {
   transition: opacity 0.3s ease;
 }
 
+/* Hide legacy title bar in horizontal mode */
+body.horizontal .title-bar {
+  display: none;
+}
+
 .title {
   color: #fff;
   font-size: 13px;
@@ -73,6 +78,59 @@ body.vertical .keyboard-container.collapsed .keyboard-keys {
   display: flex;
   gap: 6px;
   -webkit-app-region: no-drag;
+}
+
+/* Single row layout for horizontal docked mode */
+.single-row-layout {
+  display: none;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 8px;
+}
+
+body.horizontal .single-row-layout {
+  display: flex;
+}
+
+/* Hide single-row-layout in vertical mode */
+body.vertical .single-row-layout {
+  display: none;
+}
+
+/* Simplified title section - just text on background */
+.title-section {
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  height: 32px;
+  background: transparent;
+  cursor: move;
+  -webkit-app-region: drag;
+  flex-shrink: 0;
+}
+
+.title-text {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 11px;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.controls-section {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+  -webkit-app-region: no-drag;
+}
+
+body.horizontal .controls-section {
+  flex-direction: row;
+}
+
+body.horizontal .controls-section .control-btn {
+  width: 32px;
+  height: 32px;
+  font-size: 14px;
 }
 
 .control-btn {
@@ -112,6 +170,12 @@ body.vertical .keyboard-container.collapsed .keyboard-keys {
 }
 
 /* Horizontal layout - single row */
+/* Horizontal layout - remove shadow for docked appearance */
+body.horizontal .keyboard-container {
+  box-shadow: none;
+}
+
+/* Horizontal layout - keys area styling */
 body.horizontal .keyboard-keys {
   display: flex;
   flex-wrap: nowrap;
@@ -119,7 +183,7 @@ body.horizontal .keyboard-keys {
   justify-content: flex-start;
   overflow-x: auto;
   white-space: nowrap;
-  padding: 8px 12px;
+  padding: 6px 8px;
 }
 
 body.horizontal .key-row {

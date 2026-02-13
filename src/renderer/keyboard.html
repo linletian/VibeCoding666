@@ -7,14 +7,27 @@
 </head>
 <body>
   <div class="keyboard-container" id="keyboardContainer">
+    <!-- Legacy title bar for vertical layout -->
     <div class="title-bar" id="titleBar">
       <div class="title">VibeCoding666</div>
       <div class="window-controls">
+        <button class="control-btn minimize" id="minimizeBtnLegacy" title="Minimize">−</button>
+        <button class="control-btn config" id="configBtnLegacy" title="Configure">⚙</button>
+        <button class="control-btn close" id="closeBtnLegacy" title="Close">×</button>
+      </div>
+    </div>
+    <!-- Single row layout for horizontal docked mode -->
+    <div class="single-row-layout" id="singleRowLayout">
+      <div class="title-section draggable" id="titleSection">
+        <span class="title-text">VibeCoding666</span>
+      </div>
+      <div class="controls-section" id="controlsSection">
         <button class="control-btn minimize" id="minimizeBtn" title="Minimize">−</button>
         <button class="control-btn config" id="configBtn" title="Configure">⚙</button>
         <button class="control-btn close" id="closeBtn" title="Close">×</button>
       </div>
     </div>
+    <!-- Keyboard keys - separate from layout containers to work in both modes -->
     <div class="keyboard-keys" id="keyboardKeys"></div>
   </div>
   <script src="keyboard.js"></script>
