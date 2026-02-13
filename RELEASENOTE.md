@@ -1,10 +1,29 @@
-# Release Note - v0.2.1
+# Release Note - v0.3.0
+
+## Release Date
+
+2026-02-13
 
 ## What's New
-- **Intelligent Layout Binding**: Keyboard layout now automatically binds to snapping positions. Horizontal layout for Top/Bottom edges, and Vertical layout for Left/Right edges.
-- **Optimized Vertical UI**: The title bar in vertical mode has been redesigned with smaller buttons (20x20px) arranged in a single row for maximum space efficiency.
-- **Decoupled Settings Window**: The configuration window now remains fixed at its position, no longer jumping when the keyboard layout or position changes.
 
-## Bug Fixes
-- Fixed an issue where title bar buttons were hidden or misaligned in vertical mode.
-- Improved the stability of the settings UI when switching between different keyboard configurations.
+- **Cross-platform uninstall tools**:
+  - Windows installer now supports optional user-data cleanup during uninstall
+  - Added `npm run uninstall:mac` for interactive uninstall on macOS
+  - Added `npm run uninstall:linux` for interactive uninstall on Linux
+- **Updated default key presets**: default key content is now optimized for quick Chinese prompt snippets.
+- **Docs update**: `README` now includes clear uninstall instructions for Windows, macOS, and Linux.
+
+## Technical Changes
+
+- Added NSIS custom uninstall macro script: `scripts/nsis-uninstall.nsh`
+- Added shell uninstall scripts:
+  - `scripts/uninstall-macos.sh`
+  - `scripts/uninstall-linux.sh`
+- Added npm scripts:
+  - `uninstall:mac`
+  - `uninstall:linux`
+
+## Notes
+
+- On Linux, system-path cleanup may require `sudo`.
+- User-data cleanup is optional and prompted interactively by the uninstall tool.
