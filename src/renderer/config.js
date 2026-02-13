@@ -78,35 +78,25 @@ class ConfigUI {
   }
 
   setupSettingsListeners() {
-    const layoutSelect = document.getElementById('layout');
     const positionSelect = document.getElementById('position');
+    const positionPicker = document.getElementById('positionPicker');
     const autoHideCheckbox = document.getElementById('autoHide');
     const opacitySlider = document.getElementById('opacity');
     const opacityValue = document.getElementById('opacityValue');
     const alwaysOnTopCheckbox = document.getElementById('alwaysOnTop');
     const showInTaskbarCheckbox = document.getElementById('showInTaskbar');
 
-    layoutSelect.addEventListener('change', () => {
-      if (layoutSelect.value === 'horizontal') {
-        if (positionSelect.value !== 'top' && positionSelect.value !== 'bottom') {
-          positionSelect.value = 'bottom';
-        }
-      } else {
-        if (positionSelect.value !== 'left' && positionSelect.value !== 'right') {
-          positionSelect.value = 'right';
-        }
-      }
-      this.saveSettings();
-    });
-
-    positionSelect.addEventListener('change', () => {
-      if (positionSelect.value === 'top' || positionSelect.value === 'bottom') {
-        layoutSelect.value = 'horizontal';
-      } else {
-        layoutSelect.value = 'vertical';
-      }
-      this.saveSettings();
-    });
+    if (positionPicker) {
+      const edges = positionPicker.querySelectorAll('.position-edge');
+      edges.forEach(edge => {
+        edge.addEventListener('click', () => {
+          const position = edge.dataset.position;
+          positionSelect.value = position;
+          this.updatePositionPickerUI(position);
+          this.saveSettings();
+        });
+      });
+    }
 
     autoHideCheckbox.addEventListener('change', () => {
       this.saveSettings();
@@ -133,8 +123,9 @@ class ConfigUI {
   updateSettingsUI() {
     if (!this.config) return;
 
-    document.getElementById('layout').value = this.config.layout || 'horizontal';
-    document.getElementById('position').value = this.config.position || 'bottom';
+    const position = this.config.position || 'bottom';
+    document.getElementById('position').value = position;
+    this.updatePositionPickerUI(position);
     document.getElementById('autoHide').checked = this.config.autoHide !== false;
     document.getElementById('opacity').value = this.config.opacity || 0.95;
     document.getElementById('opacityValue').textContent = this.config.opacity || 0.95;
@@ -142,10 +133,28 @@ class ConfigUI {
     document.getElementById('showInTaskbar').checked = this.config.showInTaskbar === true;
   }
 
+  updatePositionPickerUI(position) {
+    const positionPicker = document.getElementById('positionPicker');
+    if (!positionPicker) return;
+
+    const edges = positionPicker.querySelectorAll('.position-edge');
+    edges.forEach(edge => {
+      edge.classList.toggle('active', edge.dataset.position === position);
+    });
+
+    const indicator = document.getElementById('keyboardIndicator');
+    if (indicator) {
+      indicator.className = 'keyboard-indicator active-' + position;
+    }
+  }
+
   saveSettings() {
+    const position = document.getElementById('position').value;
+    const layout = (position === 'top' || position === 'bottom') ? 'horizontal' : 'vertical';
+
     const newConfig = {
-      layout: document.getElementById('layout').value,
-      position: document.getElementById('position').value,
+      layout: layout,
+      position: position,
       autoHide: document.getElementById('autoHide').checked,
       opacity: parseFloat(document.getElementById('opacity').value),
       alwaysOnTop: document.getElementById('alwaysOnTop').checked,

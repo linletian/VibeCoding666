@@ -20,21 +20,26 @@
     <div class="settings-section">
       <h2>Global Settings</h2>
       <div class="settings-grid">
-        <div class="setting-item">
-          <label for="layout">Layout</label>
-          <select id="layout">
-            <option value="horizontal">Horizontal</option>
-            <option value="vertical">Vertical</option>
-          </select>
-        </div>
-        <div class="setting-item">
-          <label for="position">Position</label>
-          <select id="position">
-            <option value="top">Top</option>
-            <option value="bottom">Bottom</option>
-            <option value="left">Left</option>
-            <option value="right">Right</option>
-          </select>
+        <div class="setting-item position-picker-container">
+          <label>Position</label>
+          <div class="display-picker" id="positionPicker">
+            <div class="display-screen">
+              <div class="keyboard-indicator" id="keyboardIndicator"></div>
+            </div>
+            <div class="position-edge top" data-position="top" title="Top (Horizontal)">
+              <span class="edge-label">Top</span>
+            </div>
+            <div class="position-edge bottom" data-position="bottom" title="Bottom (Horizontal)">
+              <span class="edge-label">Bottom</span>
+            </div>
+            <div class="position-edge left" data-position="left" title="Left (Vertical)">
+              <span class="edge-label">Left</span>
+            </div>
+            <div class="position-edge right" data-position="right" title="Right (Vertical)">
+              <span class="edge-label">Right</span>
+            </div>
+          </div>
+          <input type="hidden" id="position" value="bottom">
         </div>
         <div class="setting-item">
           <label for="autoHide">Auto Hide</label>

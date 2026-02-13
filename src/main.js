@@ -291,16 +291,7 @@ class VibeCoding666 {
     });
 
     ipcMain.on('update-config', (event, newConfig) => {
-      if (newConfig.layout === 'horizontal') {
-        if (newConfig.position && newConfig.position !== 'top' && newConfig.position !== 'bottom') {
-          newConfig.position = 'bottom';
-        }
-      } else if (newConfig.layout === 'vertical') {
-        if (newConfig.position && newConfig.position !== 'left' && newConfig.position !== 'right') {
-          newConfig.position = 'right';
-        }
-      }
-
+      // Auto-calculate layout based on position
       if (newConfig.position === 'top' || newConfig.position === 'bottom') {
         newConfig.layout = 'horizontal';
       } else if (newConfig.position === 'left' || newConfig.position === 'right') {
