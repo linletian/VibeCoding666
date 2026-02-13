@@ -1,29 +1,49 @@
-# Release Note - v0.3.0
+# v0.3.2 Release Notes
 
-## Release Date
-
-2026-02-13
+## Overview
+This release focuses on UI improvements for horizontal layout and refactoring the layout system for better maintainability.
 
 ## What's New
 
-- **Cross-platform uninstall tools**:
-  - Windows installer now supports optional user-data cleanup during uninstall
-  - Added `npm run uninstall:mac` for interactive uninstall on macOS
-  - Added `npm run uninstall:linux` for interactive uninstall on Linux
-- **Updated default key presets**: default key content is now optimized for quick Chinese prompt snippets.
-- **Docs update**: `README` now includes clear uninstall instructions for Windows, macOS, and Linux.
+### ✨ New Features
+- **Improved Horizontal Layout**: Optimized UI for horizontal docked mode with a cleaner single-row design
+  - Removed window shadow for seamless docked appearance
+  - Simplified control buttons (32x32px) positioned at the right end
+  - Added subtle title text for brand visibility
 
-## Technical Changes
+### 🔧 Technical Improvements
+- **Layout System Refactoring**: Split monolithic keyboard.html into separate files:
+  - `keyboard-horizontal.html` - Dedicated horizontal layout
+  - `keyboard-vertical.html` - Dedicated vertical layout  
+  - `keyboard-common.js` - Shared JavaScript utilities
+  - Better code organization and maintainability
 
-- Added NSIS custom uninstall macro script: `scripts/nsis-uninstall.nsh`
-- Added shell uninstall scripts:
-  - `scripts/uninstall-macos.sh`
-  - `scripts/uninstall-linux.sh`
-- Added npm scripts:
-  - `uninstall:mac`
-  - `uninstall:linux`
+- **Enhanced Layout Switching**: Improved the layout change mechanism:
+  - Window now hides before loading new layout HTML to prevent visual glitches
+  - Smooth transition between horizontal and vertical modes
+  - Preserved window position and state during layout changes
 
-## Notes
+### 🐛 Bug Fixes
+- Fixed layout transition flickering when switching from horizontal to vertical mode in settings
+- Fixed vertical layout collapsed state dimensions (width: 80px instead of 12px)
 
-- On Linux, system-path cleanup may require `sudo`.
-- User-data cleanup is optional and prompted interactively by the uninstall tool.
+### 📁 New Files
+- `src/renderer/keyboard-horizontal.html`
+- `src/renderer/keyboard-horizontal.css`
+- `src/renderer/keyboard-vertical.html`
+- `src/renderer/keyboard-vertical.css`
+- `src/renderer/keyboard-common.js`
+
+### 🔨 Modified Files
+- `src/main.js` - Added getKeyboardFile() method, improved layout switching logic
+- `src/renderer/keyboard.css` - Added horizontal layout specific styles
+- `src/renderer/keyboard.html` - Added single-row layout structure
+- `src/renderer/keyboard.js` - Added legacy button event handlers
+- `README.md` - Documentation updates
+
+## Upgrade Notes
+No breaking changes. Users can upgrade seamlessly.
+
+---
+
+**Full Changelog**: https://github.com/linletian/vibecoding666/compare/v0.3.1...v0.3.2

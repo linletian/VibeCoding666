@@ -1,0 +1,182 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background: transparent;
+  overflow: hidden;
+  user-select: none;
+}
+
+.keyboard-container {
+  background: rgba(40, 40, 40, 0.95);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+/* Collapsed state */
+.keyboard-container.collapsed {
+  opacity: 0.3;
+  width: 12px;
+  overflow: hidden;
+}
+
+.keyboard-container.collapsed .title-bar,
+.keyboard-container.collapsed .keyboard-keys {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.keyboard-container.collapsed:hover {
+  opacity: 0.8;
+}
+
+.controls-top {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 4px;
+  -webkit-app-region: drag;
+}
+
+.product-name {
+  text-align: center;
+  padding: 4px 0;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 11px;
+  font-weight: 400;
+  background: transparent;
+}
+
+.control-btn {
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.control-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.control-btn.minimize:hover {
+  background: rgba(255, 193, 7, 0.8);
+}
+
+.control-btn.config:hover {
+  background: rgba(33, 150, 243, 0.8);
+}
+
+.control-btn.close:hover {
+  background: rgba(244, 67, 54, 0.8);
+}
+
+.keyboard-keys {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: stretch;
+  padding: 8px;
+}
+
+.key-row {
+  display: flex;
+  justify-content: center;
+}
+
+.key {
+  width: 64px;
+  height: 36px;
+  padding: 4px 4px;
+  border: none;
+  border-radius: 6px;
+  background: linear-gradient(145deg, #4a4a4a, #3a3a3a);
+  color: #fff;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.1s ease;
+  overflow: hidden;
+}
+
+.key:hover {
+  background: linear-gradient(145deg, #5a5a5a, #4a4a4a);
+  transform: translateY(-1px);
+}
+
+.key:active {
+  transform: translateY(1px);
+}
+
+.key.special {
+  background: linear-gradient(145deg, #5c4a7a, #4a3a68);
+}
+
+.key.special:hover {
+  background: linear-gradient(145deg, #6c5a8a, #5a4a78);
+}
+
+body.left .keyboard-container {
+  border-radius: 0 12px 12px 0;
+}
+
+body.right .keyboard-container {
+  border-radius: 12px 0 0 12px;
+}
+
+.dragging {
+  opacity: 0.8;
+}
+
+@media (prefers-color-scheme: light) {
+  .keyboard-container {
+    background: rgba(240, 240, 240, 0.95);
+  }
+  
+  .title-bar {
+    background: rgba(220, 220, 220, 0.9);
+  }
+  
+  .title {
+    color: #333;
+  }
+  
+  .key {
+    background: linear-gradient(145deg, #e0e0e0, #d0d0d0);
+    color: #333;
+  }
+  
+  .key:hover {
+    background: linear-gradient(145deg, #f0f0f0, #e0e0e0);
+  }
+}
+
+.key-label {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+  max-height: 3.6em;
+  text-align: center;
+  font-size: 11px;
+  width: 100%;
+}

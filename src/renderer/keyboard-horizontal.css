@@ -1,0 +1,202 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background: transparent;
+  overflow: hidden;
+  user-select: none;
+}
+
+.keyboard-container {
+  background: rgba(40, 40, 40, 0.95);
+  border-radius: 12px;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  box-shadow: none;
+}
+
+/* Collapsed state */
+.keyboard-container.collapsed {
+  opacity: 0.3;
+  height: 12px;
+  overflow: hidden;
+}
+
+.keyboard-container.collapsed .single-row-layout,
+.keyboard-container.collapsed .keyboard-keys {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.keyboard-container.collapsed:hover {
+  opacity: 0.8;
+}
+
+/* Single row layout */
+.single-row-layout {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 8px;
+}
+
+/* Simplified title - just text */
+.title-section {
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  height: 32px;
+  background: transparent;
+  cursor: move;
+  -webkit-app-region: drag;
+  flex-shrink: 0;
+}
+
+.title-text {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 11px;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.controls-section {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+  -webkit-app-region: no-drag;
+}
+
+.controls-section .control-btn {
+  width: 32px;
+  height: 32px;
+  font-size: 14px;
+}
+
+.control-btn {
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.control-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.control-btn.minimize:hover {
+  background: rgba(255, 193, 7, 0.8);
+}
+
+.control-btn.config:hover {
+  background: rgba(33, 150, 243, 0.8);
+}
+
+.control-btn.close:hover {
+  background: rgba(244, 67, 54, 0.8);
+}
+
+.keyboard-keys {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 4px;
+  justify-content: flex-start;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding: 0;
+  flex: 1;
+  min-width: 0;
+}
+
+.key-row {
+  display: flex;
+  gap: 4px;
+  flex-wrap: nowrap;
+}
+
+.key {
+  min-width: 36px;
+  height: 36px;
+  padding: 0 8px;
+  font-size: 12px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 6px;
+  background: linear-gradient(145deg, #4a4a4a, #3a3a3a);
+  color: #fff;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.1s ease;
+}
+
+.key:hover {
+  background: linear-gradient(145deg, #5a5a5a, #4a4a4a);
+  transform: translateY(-1px);
+}
+
+.key:active {
+  transform: translateY(1px);
+}
+
+.key.wide-2 {
+  min-width: 72px;
+}
+
+.key.wide-3 {
+  min-width: 108px;
+}
+
+.key.special {
+  background: linear-gradient(145deg, #5c4a7a, #4a3a68);
+}
+
+.key.special:hover {
+  background: linear-gradient(145deg, #6c5a8a, #5a4a78);
+}
+
+/* Position-based rounded corners */
+body.top .keyboard-container {
+  border-radius: 0 0 12px 12px;
+}
+
+body.bottom .keyboard-container {
+  border-radius: 12px 12px 0 0;
+}
+
+.dragging {
+  opacity: 0.8;
+}
+
+@media (prefers-color-scheme: light) {
+  .keyboard-container {
+    background: rgba(240, 240, 240, 0.95);
+  }
+  
+  .title-text {
+    color: rgba(0, 0, 0, 0.5);
+  }
+  
+  .key {
+    background: linear-gradient(145deg, #e0e0e0, #d0d0d0);
+    color: #333;
+  }
+  
+  .key:hover {
+    background: linear-gradient(145deg, #f0f0f0, #e0e0e0);
+  }
+}

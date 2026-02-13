@@ -16,7 +16,7 @@ class KeyboardUI {
   setupEventListeners() {
     ipcRenderer.on('config-loaded', (event, config) => {
       this.config = config;
-      this.applyLayout();
+      this.applyPosition();
       this.renderKeys();
     });
 
@@ -28,30 +28,27 @@ class KeyboardUI {
       this.collapse();
     });
 
-    document.getElementById('minimizeBtn').addEventListener('click', () => {
-      ipcRenderer.send('minimize-keyboard');
-    });
+    const minimizeBtn = document.getElementById('minimizeBtn');
+    const configBtn = document.getElementById('configBtn');
+    const closeBtn = document.getElementById('closeBtn');
 
-    document.getElementById('configBtn').addEventListener('click', () => {
-      ipcRenderer.send('open-config');
-    });
+    if (minimizeBtn) {
+      minimizeBtn.addEventListener('click', () => {
+        ipcRenderer.send('minimize-keyboard');
+      });
+    }
 
-    document.getElementById('closeBtn').addEventListener('click', () => {
-      ipcRenderer.send('close-keyboard');
-    });
+    if (configBtn) {
+      configBtn.addEventListener('click', () => {
+        ipcRenderer.send('open-config');
+      });
+    }
 
-    // Legacy buttons for vertical layout
-    document.getElementById('minimizeBtnLegacy').addEventListener('click', () => {
-      ipcRenderer.send('minimize-keyboard');
-    });
-
-    document.getElementById('configBtnLegacy').addEventListener('click', () => {
-      ipcRenderer.send('open-config');
-    });
-
-    document.getElementById('closeBtnLegacy').addEventListener('click', () => {
-      ipcRenderer.send('close-keyboard');
-    });
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => {
+        ipcRenderer.send('close-keyboard');
+      });
+    }
 
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
@@ -103,73 +100,42 @@ class KeyboardUI {
     this.container.classList.add('collapsed');
   }
 
-  applyLayout() {
+  applyPosition() {
     if (!this.config) return;
-
-    const layout = this.config.layout || 'horizontal';
     const position = this.config.position || 'bottom';
-
-    document.body.classList.remove('horizontal', 'vertical', 'top', 'bottom', 'left', 'right');
-    document.body.classList.add(layout, position);
+    document.body.classList.remove('top', 'bottom', 'left', 'right');
+    document.body.classList.add(position);
   }
 
   renderKeys() {
     if (!this.config || !this.config.keys) return;
-
     this.keysContainer.innerHTML = '';
-
-    const layout = this.config.layout || 'horizontal';
-
+    const layout = document.body.dataset.layout || this.config.layout || 'horizontal';
+    
     if (layout === 'horizontal') {
-      this.renderHorizontalSingleRow();
+      this.renderHorizontal();
     } else {
-      this.renderVerticalSingleColumn();
+      this.renderVertical();
     }
   }
 
-  renderHorizontalSingleRow() {
+  renderHorizontal() {
     const row = document.createElement('div');
     row.className = 'key-row';
-
-    const keyOrder = [
-      '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
-      'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p',
-      'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l',
-      'z', 'x', 'c', 'v', 'b', 'n', 'm',
-      'email', 'phone', 'dot', 'comma', 'question', 'exclaim',
-      'space', 'backspace', 'enter'
-    ];
-
-    keyOrder.forEach(id => {
-      const keyData = this.config.keys.find(k => k.id === id);
-      if (keyData) {
-        const keyButton = this.createKeyButton(keyData);
-        row.appendChild(keyButton);
-      }
+    this.config.keys.forEach(keyData => {
+      const keyButton = this.createKeyButton(keyData);
+      row.appendChild(keyButton);
     });
-
     this.keysContainer.appendChild(row);
   }
 
-  renderVerticalSingleColumn() {
-    const keyOrder = [
-      '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
-      'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p',
-      'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l',
-      'z', 'x', 'c', 'v', 'b', 'n', 'm',
-      'email', 'phone', 'dot', 'comma', 'question', 'exclaim',
-      'space', 'backspace', 'enter'
-    ];
-
-    keyOrder.forEach(id => {
-      const keyData = this.config.keys.find(k => k.id === id);
-      if (keyData) {
-        const row = document.createElement('div');
-        row.className = 'key-row';
-        const keyButton = this.createKeyButton(keyData);
-        row.appendChild(keyButton);
-        this.keysContainer.appendChild(row);
-      }
+  renderVertical() {
+    this.config.keys.forEach(keyData => {
+      const row = document.createElement('div');
+      row.className = 'key-row';
+      const keyButton = this.createKeyButton(keyData);
+      row.appendChild(keyButton);
+      this.keysContainer.appendChild(row);
     });
   }
 
@@ -184,7 +150,6 @@ class KeyboardUI {
     if (keyData.width && keyData.width > 1) {
       button.classList.add(`wide-${keyData.width}`);
     }
-
     if (keyData.type === 'special') {
       button.classList.add('special');
     }

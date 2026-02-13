@@ -72,13 +72,13 @@ class VibeCoding666 {
     if (expanded) {
       if (layout === 'vertical') {
         return { width: 80, height: verticalHeight };
-      }
+     }
       return { width: horizontalWidth, height: 80 };
     } else {
       // Collapsed dimensions
       if (layout === 'vertical') {
-        return { width: 12, height: verticalHeight };
-      }
+        return { width: 80, height: verticalHeight };
+     }
       return { width: horizontalWidth, height: 12 };
     }
   }
@@ -101,6 +101,13 @@ class VibeCoding666 {
       default:
         return { x: Math.round((screenWidth - width) / 2), y: screenHeight - height };
     }
+  }
+  getKeyboardFile() {
+    const layout = this.config.layout || 'horizontal';
+    if (layout === 'horizontal') {
+      return path.join(__dirname, 'renderer', 'keyboard-horizontal.html');
+    }
+    return path.join(__dirname, 'renderer', 'keyboard-vertical.html');
   }
 
   createMainWindow() {
@@ -130,17 +137,20 @@ class VibeCoding666 {
       show: false
     });
 
-    this.mainWindow.loadFile(path.join(__dirname, 'renderer', 'keyboard.html'));
+    this.mainWindow.loadFile(this.getKeyboardFile());
 
     this.mainWindow.on('closed', () => {
       this.mainWindow = null;
     });
 
     this.mainWindow.webContents.on('did-finish-load', () => {
-      this.windowBounds = { x, y, width, height };
-      this.mainWindow.setBounds(this.windowBounds);
+      // 使用可能已经更新的 windowBounds
+      if (this.windowBounds) {
+        this.mainWindow.setBounds(this.windowBounds);
+      }
       this.mainWindow.show();
-      this.mainWindow.webContents.send('config-loaded', this.config);
+      const configToSend = {...this.config, layout: this.config.layout || "horizontal"};
+      this.mainWindow.webContents.send('config-loaded', configToSend);
     });
   }
 
@@ -198,6 +208,7 @@ class VibeCoding666 {
       this.config.layout = 'vertical';
     }
 
+    const oldLayout = this.config.layout;
     this.config.position = closestEdge;
     this.saveConfig();
 
@@ -207,7 +218,13 @@ class VibeCoding666 {
     this.windowBounds = { ...newPos, width: newDims.width, height: newDims.height };
     this.mainWindow.setBounds(this.windowBounds);
 
-    this.mainWindow.webContents.send('config-loaded', this.config);
+    // 如果布局改变，重新加载对应的HTML文件
+    if (oldLayout !== this.config.layout) {
+      this.mainWindow.loadFile(this.getKeyboardFile());
+    } else {
+      const configToSend = {...this.config, layout: this.config.layout || "horizontal"};
+      this.mainWindow.webContents.send('config-loaded', configToSend);
+    }
   }
 
   createConfigWindow() {
@@ -308,14 +325,25 @@ class VibeCoding666 {
         this.mainWindow.setAlwaysOnTop(this.config.alwaysOnTop);
         this.mainWindow.setOpacity(this.config.opacity);
 
-        if (needsResize || needsReposition) {
+        // 如果布局改变，需要先隐藏窗口，加载新HTML后再显示
+        if (needsResize) {
+          this.mainWindow.hide();
+          // 预计算新的窗口尺寸和位置
+          const { width, height } = this.getWindowDimensions(this.isExpanded);
+          const { x, y } = this.getWindowPosition();
+          this.windowBounds = { x, y, width, height };
+          this.mainWindow.loadFile(this.getKeyboardFile());
+        } else if (needsReposition) {
           const { width, height } = this.getWindowDimensions(this.isExpanded);
           const { x, y } = this.getWindowPosition();
           this.windowBounds = { x, y, width, height };
           this.mainWindow.setBounds(this.windowBounds);
+          const configToSend = {...this.config, layout: this.config.layout || "horizontal"};
+          this.mainWindow.webContents.send('config-loaded', configToSend);
+        } else {
+          const configToSend = {...this.config, layout: this.config.layout || "horizontal"};
+          this.mainWindow.webContents.send('config-loaded', configToSend);
         }
-
-        this.mainWindow.webContents.send('config-loaded', this.config);
       }
     });
 
@@ -391,7 +419,8 @@ class VibeCoding666 {
             const { x, y } = this.getWindowPosition();
             this.windowBounds = { x, y, width, height };
             this.mainWindow.setBounds(this.windowBounds);
-            this.mainWindow.webContents.send('config-loaded', this.config);
+            const configToSend = {...this.config, layout: this.config.layout || "horizontal"};
+      this.mainWindow.webContents.send('config-loaded', configToSend);
           }
 
           if (this.configWindow) {
