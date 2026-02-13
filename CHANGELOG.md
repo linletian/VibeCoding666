@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.1] - 2026-02-13
+
+### Added
+
+- Visual display position picker in settings: click screen edges to select position
+- Open source community files (LICENSE, CODE_OF_CONDUCT, CONTRIBUTING, SECURITY)
+
+### Changed
+
+- Vertical layout buttons now auto-adjust height with 3-line text limit
+- Removed layout dropdown from settings (layout now determined by position)
+- Updated README with latest features
+
+### Fixed
+
+- Text overflow in vertical layout buttons now shows ellipsis after 3 lines
+
 ## [0.3.0] - 2026-02-13
 
 ### Added
@@ -72,6 +89,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Always-on-top overlay window with transparency support
 - Basic horizontal keyboard layout with multiple rows
 
+[0.3.1]: https://github.com/yourusername/vibecoding666/compare/v0.3.0...v0.3.1
 [0.2.1]: https://github.com/yourusername/vibecoding666/compare/v0.2.0...v0.2.1
 [0.3.0]: https://github.com/yourusername/vibecoding666/compare/v0.2.1...v0.3.0
 [0.2.0]: https://github.com/yourusername/vibecoding666/compare/v0.1.0...v0.2.0
