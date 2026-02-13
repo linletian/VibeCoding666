@@ -163,7 +163,10 @@ class KeyboardUI {
   createKeyButton(keyData) {
     const button = document.createElement('button');
     button.className = 'key';
-    button.textContent = keyData.label;
+    const span = document.createElement('span');
+    span.className = 'key-label';
+    span.textContent = keyData.label;
+    button.appendChild(span);
 
     if (keyData.width && keyData.width > 1) {
       button.classList.add(`wide-${keyData.width}`);

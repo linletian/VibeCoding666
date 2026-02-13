@@ -181,9 +181,22 @@ body.vertical .key-row {
 
 body.vertical .key {
   min-width: 60px;
-  height: 36px;
-  padding: 0 8px;
+  min-height: 36px;
+  height: auto;
+  padding: 4px 8px;
+}
+
+body.vertical .key-label {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.2;
   font-size: 12px;
+  width: 100%;
 }
 
 /* Common key styles */
