@@ -1,0 +1,3 @@
+- Updated CHANGELOG.md for v0.2.1 using Keep a Changelog format.
+- Inserted new version at the top of the version list.
+- Updated comparison links at the footer.
