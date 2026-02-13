@@ -63,43 +63,55 @@ class VibeCoding666 {
 
   getWindowDimensions(expanded = true) {
     const layout = this.config.layout || 'horizontal';
+    const position = this.config.position || 'bottom';
     const primaryDisplay = screen.getPrimaryDisplay();
     const { width: screenWidth, height: screenHeight } = primaryDisplay.workAreaSize;
 
     const horizontalWidth = Math.round(screenWidth * 0.9);
-    const verticalHeight = Math.round(screenHeight * 0.7);
+    const horizontalExpandedHeight = 48;
+    
+    // Calculate vertical height based on key count
+    // Header(~62px) + Padding(~16px) + Keys(N * 40px)
+    let verticalHeight = Math.round(screenHeight * 0.7);
+    if (this.config && this.config.keys) {
+      const estimatedHeight = 80 + (this.config.keys.length * 40);
+      // Limit to 80% screen height or estimated height, whichever is smaller
+      // But ensure a minimum height (e.g. 200px)
+      verticalHeight = Math.min(Math.max(200, estimatedHeight), Math.round(screenHeight * 0.8));
+    }
 
     if (expanded) {
       if (layout === 'vertical') {
         return { width: 80, height: verticalHeight };
-     }
-      return { width: horizontalWidth, height: 80 };
-    } else {
-      // Collapsed dimensions
-      if (layout === 'vertical') {
-        return { width: 80, height: verticalHeight };
-     }
+      }
+      return { width: horizontalWidth, height: horizontalExpandedHeight };
+    }
+
+    // Collapsed trigger bar dimensions should follow edge direction
+    if (position === 'top' || position === 'bottom') {
       return { width: horizontalWidth, height: 12 };
     }
+
+    return { width: 12, height: verticalHeight };
   }
 
   getWindowPosition() {
     const primaryDisplay = screen.getPrimaryDisplay();
-    const { width: screenWidth, height: screenHeight } = primaryDisplay.workAreaSize;
+    const { x: workAreaX, y: workAreaY, width: workAreaWidth, height: workAreaHeight } = primaryDisplay.workArea;
     const { width, height } = this.getWindowDimensions(this.isExpanded);
     const position = this.config.position || 'bottom';
 
     switch (position) {
       case 'top':
-        return { x: Math.round((screenWidth - width) / 2), y: 0 };
+        return { x: Math.round(workAreaX + (workAreaWidth - width) / 2), y: workAreaY };
       case 'bottom':
-        return { x: Math.round((screenWidth - width) / 2), y: screenHeight - height };
+        return { x: Math.round(workAreaX + (workAreaWidth - width) / 2), y: workAreaY + workAreaHeight - height };
       case 'left':
-        return { x: 0, y: Math.round((screenHeight - height) / 2) };
+        return { x: workAreaX, y: Math.round(workAreaY + (workAreaHeight - height) / 2) };
       case 'right':
-        return { x: screenWidth - width, y: Math.round((screenHeight - height) / 2) };
+        return { x: workAreaX + workAreaWidth - width, y: Math.round(workAreaY + (workAreaHeight - height) / 2) };
       default:
-        return { x: Math.round((screenWidth - width) / 2), y: screenHeight - height };
+        return { x: Math.round(workAreaX + (workAreaWidth - width) / 2), y: workAreaY + workAreaHeight - height };
     }
   }
   getKeyboardFile() {
@@ -137,6 +149,10 @@ class VibeCoding666 {
       show: false
     });
 
+    if (typeof this.mainWindow.setHasShadow === 'function') {
+      this.mainWindow.setHasShadow(false);
+    }
+
     this.mainWindow.loadFile(this.getKeyboardFile());
 
     this.mainWindow.on('closed', () => {
@@ -146,7 +162,7 @@ class VibeCoding666 {
     this.mainWindow.webContents.on('did-finish-load', () => {
       // 使用可能已经更新的 windowBounds
       if (this.windowBounds) {
-        this.mainWindow.setBounds(this.windowBounds);
+        this.setWindowBoundsWithEdgeCorrection(this.windowBounds);
       }
       this.mainWindow.show();
       const configToSend = {...this.config, layout: this.config.layout || "horizontal"};
@@ -154,14 +170,63 @@ class VibeCoding666 {
     });
   }
 
+  setWindowBoundsWithEdgeCorrection(bounds) {
+    if (!this.mainWindow) return;
+
+    const position = this.config.position || 'bottom';
+    this.mainWindow.setBounds(bounds);
+
+    const actualBounds = this.mainWindow.getBounds();
+    const primaryDisplay = screen.getPrimaryDisplay();
+    const { x: workAreaX, y: workAreaY, width: workAreaWidth, height: workAreaHeight } = primaryDisplay.workArea;
+
+    let correctedX = actualBounds.x;
+    let correctedY = actualBounds.y;
+
+    if (position === 'top') {
+      correctedY = workAreaY;
+    } else if (position === 'bottom') {
+      correctedY = workAreaY + workAreaHeight - actualBounds.height;
+    } else if (position === 'left') {
+      correctedX = workAreaX;
+    } else if (position === 'right') {
+      correctedX = workAreaX + workAreaWidth - actualBounds.width;
+    }
+
+    if (correctedX !== actualBounds.x || correctedY !== actualBounds.y) {
+      this.mainWindow.setBounds({
+        x: correctedX,
+        y: correctedY,
+        width: actualBounds.width,
+        height: actualBounds.height,
+      });
+    }
+
+    this.windowBounds = this.mainWindow.getBounds();
+  }
+
   expandWindow() {
     if (!this.mainWindow) return;
     this.isExpanded = true;
     const { width, height } = this.getWindowDimensions(true);
-    const { x, y } = this.getWindowPosition();
+    const position = this.config.position || 'bottom';
+    const currentBounds = this.mainWindow.getBounds();
+    
+    // 基于当前位置计算新位置，保持在原地展开
+    let x = currentBounds.x;
+    let y = currentBounds.y;
+
+    if (position === 'bottom') {
+      // 底部吸附：保持底部位置不变，向上延伸
+      y = currentBounds.y + currentBounds.height - height;
+    } else if (position === 'right') {
+      // 右侧吸附：保持右侧位置不变，向左延伸
+      x = currentBounds.x + currentBounds.width - width;
+    } 
+    // top 和 left 只需要保持 x, y 不变（因为是左上角锚点），只是宽高变化
+
     this.windowBounds = { x, y, width, height };
-    this.mainWindow.setBounds(this.windowBounds);
-    this.mainWindow.setSize(width, height);
+    this.setWindowBoundsWithEdgeCorrection(this.windowBounds);
     this.mainWindow.webContents.send('expand-keyboard');
   }
 
@@ -169,10 +234,24 @@ class VibeCoding666 {
     if (!this.mainWindow) return;
     this.isExpanded = false;
     const { width, height } = this.getWindowDimensions(false);
-    const { x, y } = this.getWindowPosition();
+    const position = this.config.position || 'bottom';
+    const currentBounds = this.mainWindow.getBounds();
+
+    // 基于当前位置计算新位置，保持在原地折叠
+    let x = currentBounds.x;
+    let y = currentBounds.y;
+
+    if (position === 'bottom') {
+      // 底部吸附：保持底部位置不变，新 y = 旧底部 - 新高度
+      y = currentBounds.y + currentBounds.height - height;
+    } else if (position === 'right') {
+      // 右侧吸附：保持右侧位置不变，新 x = 旧右侧 - 新宽度
+      x = currentBounds.x + currentBounds.width - width;
+    }
+    // top 和 left 只需要保持 x, y 不变
+
     this.windowBounds = { x, y, width, height };
-    this.mainWindow.setBounds(this.windowBounds);
-    this.mainWindow.setSize(width, height);
+    this.setWindowBoundsWithEdgeCorrection(this.windowBounds);
     this.mainWindow.webContents.send('collapse-keyboard');
   }
 
@@ -180,15 +259,14 @@ class VibeCoding666 {
     if (!this.mainWindow) return;
 
     const primaryDisplay = screen.getPrimaryDisplay();
-    const { width: screenWidth, height: screenHeight } = primaryDisplay.workAreaSize;
-    const [currentX, currentY] = this.mainWindow.getPosition();
-    const { width, height } = this.getWindowDimensions(true);
+    const { x: workAreaX, y: workAreaY, width: workAreaWidth, height: workAreaHeight } = primaryDisplay.workArea;
+    const { x: currentX, y: currentY, width, height } = this.mainWindow.getBounds();
 
     const distances = {
-      top: currentY,
-      bottom: screenHeight - (currentY + height),
-      left: currentX,
-      right: screenWidth - (currentX + width)
+      top: currentY - workAreaY,
+      bottom: (workAreaY + workAreaHeight) - (currentY + height),
+      left: currentX - workAreaX,
+      right: (workAreaX + workAreaWidth) - (currentX + width)
     };
 
     let closestEdge = 'bottom';
@@ -212,11 +290,14 @@ class VibeCoding666 {
     this.config.position = closestEdge;
     this.saveConfig();
 
+    // 切换位置后强制展开
+    this.isExpanded = true;
+
     // Recalculate position with new layout
     const newPos = this.getWindowPosition();
     const newDims = this.getWindowDimensions(this.isExpanded);
     this.windowBounds = { ...newPos, width: newDims.width, height: newDims.height };
-    this.mainWindow.setBounds(this.windowBounds);
+    this.setWindowBoundsWithEdgeCorrection(this.windowBounds);
 
     // 如果布局改变，重新加载对应的HTML文件
     if (oldLayout !== this.config.layout) {
@@ -224,6 +305,7 @@ class VibeCoding666 {
     } else {
       const configToSend = {...this.config, layout: this.config.layout || "horizontal"};
       this.mainWindow.webContents.send('config-loaded', configToSend);
+      this.mainWindow.webContents.send('expand-keyboard');
     }
   }
 
@@ -318,6 +400,11 @@ class VibeCoding666 {
       const needsResize = newConfig.layout && newConfig.layout !== this.config.layout;
       const needsReposition = newConfig.position && newConfig.position !== this.config.position;
 
+      // 只要位置或布局改变，就强制展开
+      if (needsResize || needsReposition) {
+        this.isExpanded = true;
+      }
+
       this.config = { ...this.config, ...newConfig };
       this.saveConfig();
 
@@ -337,9 +424,10 @@ class VibeCoding666 {
           const { width, height } = this.getWindowDimensions(this.isExpanded);
           const { x, y } = this.getWindowPosition();
           this.windowBounds = { x, y, width, height };
-          this.mainWindow.setBounds(this.windowBounds);
+          this.setWindowBoundsWithEdgeCorrection(this.windowBounds);
           const configToSend = {...this.config, layout: this.config.layout || "horizontal"};
           this.mainWindow.webContents.send('config-loaded', configToSend);
+          this.mainWindow.webContents.send('expand-keyboard');
         } else {
           const configToSend = {...this.config, layout: this.config.layout || "horizontal"};
           this.mainWindow.webContents.send('config-loaded', configToSend);
@@ -363,6 +451,44 @@ class VibeCoding666 {
       }
     });
 
+    ipcMain.on('window-drag', (event, { deltaX, deltaY }) => {
+      if (!this.mainWindow) return;
+
+      const position = this.config.position || 'bottom';
+      const bounds = this.mainWindow.getBounds();
+      const primaryDisplay = screen.getPrimaryDisplay();
+      const { x: workAreaX, y: workAreaY, width: workAreaWidth, height: workAreaHeight } = primaryDisplay.workArea;
+      
+      let newX = bounds.x;
+      let newY = bounds.y;
+
+      // 仅允许沿贴合边缘的轴向移动，并限制在 WorkArea 内
+      if (position === 'top' || position === 'bottom') {
+        newX += deltaX;
+        // 限制 X 范围：不超出左边界，且右侧不超出右边界
+        newX = Math.max(workAreaX, Math.min(newX, workAreaX + workAreaWidth - bounds.width));
+      } else { // left or right
+        newY += deltaY;
+        // 限制 Y 范围：不超出上边界，且底部不超出下边界
+        newY = Math.max(workAreaY, Math.min(newY, workAreaY + workAreaHeight - bounds.height));
+      }
+
+      // 如果位置没有实际变化，则不更新（避免不必要的 IPC 和重绘）
+      if (newX !== bounds.x || newY !== bounds.y) {
+        this.mainWindow.setBounds({ 
+          x: newX,
+          y: newY,
+          width: bounds.width,
+          height: bounds.height
+        });
+        
+        // 更新 windowBounds 以保持记录
+        this.windowBounds = this.mainWindow.getBounds();
+      }
+    });
+
+    // Old move-window handler (deprecated or keep for other IPCs?)
+    // Keeping it but logic is superseded by window-drag for mouse dragging
     ipcMain.on('move-window', (event, { x, y }) => {
       if (this.mainWindow) {
         const [currentX, currentY] = this.mainWindow.getPosition();
@@ -418,7 +544,7 @@ class VibeCoding666 {
             const { width, height } = this.getWindowDimensions(this.isExpanded);
             const { x, y } = this.getWindowPosition();
             this.windowBounds = { x, y, width, height };
-            this.mainWindow.setBounds(this.windowBounds);
+            this.setWindowBoundsWithEdgeCorrection(this.windowBounds);
             const configToSend = {...this.config, layout: this.config.layout || "horizontal"};
       this.mainWindow.webContents.send('config-loaded', configToSend);
           }

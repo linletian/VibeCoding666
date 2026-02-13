@@ -1,3 +1,28 @@
+# v0.3.3 Release Notes
+
+## Overview
+This release improves window dragging and positioning, fixes edge snapping issues, and replaces CSS-based dragging with JS-driven drag handlers for more reliable behavior across displays.
+
+## What's New
+
+### ✨ New Features
+- **JS-driven dragging**: renderer now attaches drag listeners and sends `window-drag` IPC delta events to the main process for smoother, script-controlled window movement
+
+### 🔧 Technical Improvements
+- **Window bounds correction**: added `setWindowBoundsWithEdgeCorrection()` in `src/main.js` to ensure the window stays within the current display work area
+- **Adaptive sizing**: expanded/collapsed dimensions now consider `position` and key count to compute sensible heights
+- **CSS changes**: removed some `-webkit-app-region: drag` rules and added cursor/scrollbar tweaks for horizontal and vertical layouts
+
+### 🐛 Bug Fixes
+- Fixed window positioning when snapping to edges to avoid off-screen placement and flicker in multi-monitor setups
+
+### 🔨 Modified Files
+- `src/main.js` - window bounds, expand/collapse behavior, edge-corrected positioning
+- `src/renderer/keyboard-common.js` - drag listener and IPC sending
+- `src/renderer/keyboard-horizontal.css`, `src/renderer/keyboard-vertical.css` - drag cursor and scrollbar tweaks
+
+---
+
 # v0.3.2 Release Notes
 
 ## Overview

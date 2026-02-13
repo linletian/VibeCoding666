@@ -12,6 +12,9 @@ body {
 }
 
 .keyboard-container {
+  display: flex;
+  flex-direction: column;
+  max-height: 98vh; /* Limit height to nearly full screen */
   background: rgba(40, 40, 40, 0.95);
   border-radius: 12px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
@@ -43,7 +46,12 @@ body {
   align-items: center;
   gap: 4px;
   padding: 8px 4px;
-  -webkit-app-region: drag;
+  /* -webkit-app-region: drag; Removed for JS controlled dragging */
+  cursor: grab;
+}
+
+.controls-top:active {
+  cursor: grabbing;
 }
 
 .product-name {
@@ -92,6 +100,28 @@ body {
   gap: 4px;
   align-items: stretch;
   padding: 8px;
+  overflow-y: auto;
+  flex: 1; /* Allow it to take available space */
+  min-height: 0; /* Crucial for scrolling in flex containers */
+  max-height: calc(100vh - 60px); /* Limit height to viewport height minus header */
+}
+
+/* Slim scrollbar */
+.keyboard-keys::-webkit-scrollbar {
+  width: 4px;
+}
+
+.keyboard-keys::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.keyboard-keys::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.keyboard-keys::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
 }
 
 .key-row {
