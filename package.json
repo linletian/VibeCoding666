@@ -2,6 +2,19 @@
   "name": "vibecoding666",
   "version": "0.3.0",
   "description": "VibeCoding666 - 跨平台屏幕软键盘，支持自定义按键内容",
+  "license": "MIT",
+  "author": "VibeCoding666 Contributors",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/linletian/vibecoding666.git"
+  },
+  "homepage": "https://github.com/linletian/vibecoding666#readme",
+  "bugs": {
+    "url": "https://github.com/linletian/vibecoding666/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "main": "src/main.js",
   "scripts": {
     "start": "electron .",

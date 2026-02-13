@@ -115,4 +115,4 @@ npm run uninstall:linux
 
 ## 许可
 
-MIT
+MIT（详见 `LICENSE`）
