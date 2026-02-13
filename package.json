@@ -1,6 +1,6 @@
 {
   "name": "vibecoding666",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "VibeCoding666 - 跨平台屏幕软键盘，支持自定义按键内容",
   "main": "src/main.js",
   "scripts": {
@@ -10,7 +10,9 @@
     "build:win": "electron-builder --win",
     "build:linux": "electron-builder --linux",
     "postinstall": "electron-builder install-app-deps",
-    "rebuild": "npm rebuild --runtime=electron --target=22.3.27 --disturl=https://electronjs.org/headers --abi=110"
+    "rebuild": "npm rebuild --runtime=electron --target=22.3.27 --disturl=https://electronjs.org/headers --abi=110",
+    "uninstall:mac": "bash scripts/uninstall-macos.sh",
+    "uninstall:linux": "bash scripts/uninstall-linux.sh"
   },
   "build": {
     "appId": "com.vibecoding666.app",
@@ -27,7 +29,10 @@
       "target": [
         {
           "target": "dmg",
-          "arch": ["x64", "arm64"]
+          "arch": [
+            "x64",
+            "arm64"
+          ]
         }
       ],
       "category": "public.app-category.utilities"
@@ -36,19 +41,29 @@
       "target": [
         {
           "target": "nsis",
-          "arch": ["x64", "ia32"]
+          "arch": [
+            "x64",
+            "ia32"
+          ]
         }
       ]
+    },
+    "nsis": {
+      "include": "scripts/nsis-uninstall.nsh"
     },
     "linux": {
       "target": [
         {
           "target": "AppImage",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         },
         {
           "target": "deb",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         }
       ],
       "category": "Utility"
@@ -60,5 +75,8 @@
   },
   "dependencies": {
     "robotjs": "^0.6.0"
+  },
+  "overrides": {
+    "node-abi": "^3.77.0"
   }
 }

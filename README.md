@@ -87,6 +87,32 @@ npm install
 - Windows: `%APPDATA%/VibeCoding666/`
 - Linux: `~/.config/VibeCoding666/`
 
+## 卸载说明
+
+### Windows
+
+使用安装包自带的卸载程序时，会弹出确认框：
+- 选择 `No`：仅卸载程序，保留用户数据
+- 选择 `Yes`：卸载程序并删除用户数据（配置和自定义按键）
+
+### macOS
+
+可运行卸载工具：
+```bash
+npm run uninstall:mac
+```
+
+脚本会先卸载应用，再询问是否清除用户数据（配置和自定义按键）。
+
+### Linux
+
+可运行卸载工具：
+```bash
+npm run uninstall:linux
+```
+
+脚本会先尝试卸载 `vibecoding666` 包（如已安装），再询问是否清除用户数据（配置和自定义按键）。
+
 ## 许可
 
 MIT
