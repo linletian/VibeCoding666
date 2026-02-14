@@ -94,3 +94,134 @@ No breaking changes. Users can upgrade seamlessly.
 ---
 
 **Full Changelog**: https://github.com/linletian/vibecoding666/compare/v0.3.1...v0.3.2
+
+---
+
+# v0.3.1 Release Notes
+
+**Release Date:** February 13, 2026
+
+## What's New
+
+### Visual Position Picker
+The settings window now features an intuitive visual display position picker. Instead of selecting from a dropdown, you can now click directly on screen edges (top, bottom, left, right) to position your keyboard. This makes it much easier to visualize where your keyboard will appear.
+
+### Open Source Community Files
+We've added comprehensive open source community documentation:
+- **LICENSE**: MIT License
+- **CODE_OF_CONDUCT.md**: Community guidelines
+- **CONTRIBUTING.md**: How to contribute to the project
+- **SECURITY.md**: Security policies and reporting
+- **Issue templates**: Bug reports and feature requests
+- **Pull request template**: Standardized PR format
+
+## Improvements
+
+### UI Enhancements
+- **Vertical layout buttons** now auto-adjust their height to accommodate longer text
+- Text is limited to a maximum of 3 lines with ellipsis (...) for overflow
+- Removed the Layout dropdown from settings - the layout is now automatically determined by the position you select:
+  - Top/Bottom positions → Horizontal layout
+  - Left/Right positions → Vertical layout
+
+## Bug Fixes
+- Fixed text overflow in vertical layout buttons - long text now properly truncates with ellipsis after 3 lines
+
+## Contributors
+- Ultraworked with [Sisyphus](https://github.com/code-yeongyu/oh-my-opencode)
+
+## Installation
+
+### macOS
+Download the `.dmg` file and drag VibeCoding666 to your Applications folder.
+
+### Windows
+Download and run the `.exe` installer. Administrator privileges are required for proper installation.
+
+### Linux
+Download the `.AppImage` file, make it executable (`chmod +x VibeCoding666.AppImage`), and run it. Or install the `.deb` package for Debian/Ubuntu systems.
+
+## Verification
+
+You can verify the integrity of downloaded files using the provided checksums in the release assets.
+
+---
+
+**Full Changelog**: https://github.com/yourusername/vibecoding666/compare/v0.3.0...v0.3.1
+
+---
+
+# v0.2.0 Release Notes
+
+## 🎉 What's New
+
+### Auto-Hide Feature
+The keyboard now intelligently hides when not in use. When you drag the keyboard to any screen edge, it collapses into a thin, semi-transparent bar. Simply hover your mouse over the bar to expand the full keyboard, and it will automatically collapse again when you move away.
+
+**How to use:**
+1. Drag the keyboard to any screen edge (top, bottom, left, or right)
+2. The keyboard automatically snaps and collapses to a thin bar
+3. Hover over the bar to expand the keyboard
+4. Move your mouse away and wait 1 second for it to collapse again
+
+### Smart Layout Switching
+The keyboard automatically switches between horizontal and vertical layouts based on which edge you snap it to:
+- **Top/Bottom edges** → Horizontal layout (single row)
+- **Left/Right edges** → Vertical layout (single column)
+
+No manual configuration needed - just drag and the layout adapts!
+
+### Responsive Sizing
+Keyboard dimensions now adapt to your screen size:
+- **Horizontal mode**: 90% of screen width × 80px height
+- **Vertical mode**: 80px width × 70% of screen height
+
+This ensures the keyboard looks great on any display, from laptops to ultrawide monitors.
+
+### Improved Single-Line Layouts
+
+#### Horizontal Layout
+All keys are now arranged in a single scrollable row, perfect for placement at the top or bottom of your screen.
+
+#### Vertical Layout
+All keys are arranged in a single scrollable column, ideal for side placement without taking up horizontal workspace.
+
+## 🚀 Getting Started
+
+### Installation
+```bash
+cd VibeCoding666
+npm install
+npm start
+```
+
+### Quick Tips
+- **Global shortcut**: `Ctrl/Cmd + Alt + K` to show/hide
+- **Drag to snap**: Drag near any edge to snap automatically
+- **Configure keys**: Click the ⚙️ button to customize
+- **Auto-hide**: Enabled by default, can be disabled in settings
+
+## 🐛 Known Issues
+
+- macOS Dock may interfere with bottom edge detection
+- Some applications may require accessibility permissions for input simulation
+
+## 🔧 System Requirements
+
+- **macOS**: 10.14+ (Intel & Apple Silicon)
+- **Windows**: Windows 10+
+- **Linux**: Ubuntu 18.04+ / Debian 9+ / Fedora 30+
+
+## 📦 Download
+
+Pre-built binaries will be available in the Releases section soon.
+
+## 🙏 Credits
+
+Built with:
+- [Electron](https://www.electronjs.org/) - Cross-platform desktop framework
+- [robotjs](https://github.com/octalmage/robotjs) - Native input simulation
+
+---
+
+**Full Changelog**: [v0.1.0...v0.2.0](https://github.com/yourusername/vibecoding666/compare/v0.1.0...v0.2.0)

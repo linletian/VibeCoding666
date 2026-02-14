@@ -41,6 +41,16 @@ coverage/
 tmp/
 temp/
 *.tmp
+.sisyphus/
+
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# Local AI notes / agent instructions
+AGENTS.md
+QWEN.md
 
 # Native module builds
 build/Release/
