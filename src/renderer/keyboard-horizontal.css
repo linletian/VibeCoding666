@@ -220,7 +220,23 @@ body.bottom .keyboard-container {
   }
   
   .title-text {
-    color: rgba(0, 0, 0, 0.5);
+    color: #333;
+  }
+  
+  .control-btn {
+    color: #333;
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  .control-btn:hover {
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+  /* Specific hover states */
+  .control-btn.minimize:hover,
+  .control-btn.config:hover,
+  .control-btn.close:hover {
+    color: #fff;
   }
   
   .key {

@@ -187,6 +187,26 @@ body.right .keyboard-container {
   .title {
     color: #333;
   }
+
+  .product-name {
+    color: #333;
+  }
+
+  .control-btn {
+    color: #333;
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  .control-btn:hover {
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+  /* Specific hover states */
+  .control-btn.minimize:hover,
+  .control-btn.config:hover,
+  .control-btn.close:hover {
+    color: #fff;
+  }
   
   .key {
     background: linear-gradient(145deg, #e0e0e0, #d0d0d0);
