@@ -6,11 +6,13 @@ English | [中文](README_CN.md)
 
 This is a serious yet abstract project! Joke around if you want, but don’t treat Vibe Coding as a joke.
 
-This is an on-screen keyboard shortcut tool built specifically for Vibe Coding. It was inspired by a RedNote user asking for a Vibe Coding shortcut keyboard. With one mouse click, you can quickly input common prompts such as “Help me fix this bug,” “Keep fixing the bug,” “Reply to me in Chinese!”, and “Write the code directly.” All key contents are fully customizable.
+This is an on-screen keyboard shortcut tool built specifically for Vibe Coding. It was inspired by a RedNote user asking for a Vibe Coding shortcut keyboard. With one mouse click, you can quickly input common prompts such as “Help me fix this bug,” “Keep fixing the bug,” “Reply to me in Chinese!”, and “Write the code directly.” All key contents are fully customizable. Simply attach it to either side of your screen workspace and you can use it freely.
 
 The name VibeCoding666 is a blessing for everyone to stay “666” (smooth and awesome) throughout Vibe Coding. This project was also developed fully in a Vibe Coding style, including architectural decisions—except for this section in the README.
 
-So far it has only been tested on macOS 13.7 now.
+It is designed to be compatible with macOS/Windows/Linux, but is currently only tested on macOS 13.7.
+
+![Screenshot](docs/screenshot.png)
 
 ## Latest Version
 
