@@ -1,23 +1,25 @@
 # VibeCoding666
 
-## 人类专用章节
+English | [中文](README_CN.md)
 
-这是一个严肃但又抽象的项目！笑归笑，闹归闹，别拿 Vibe Coding 当玩笑！
+## Human-Only Section
 
-一个专门为 Vibe Coding 设计的屏幕软键盘快捷键，灵感来源一位小红书博主求 Vibe Coding 快捷键盘。本项目可以鼠标一键输入“帮我修 bug”、“继续修 bug”、“中文回答我！”、“直接写代码”等常用 Vibe Coding 对话内容。所有按键内容也都可以自定义。
+This is a serious yet abstract project! Joke around if you want, but don’t treat Vibe Coding as a joke.
 
-项目取名 VibeCoding666 是祝福大家在 Vibe Coding 过程中全程 666。本项目也是全程使用 Vibe Coding 方式开发的，包括架构选型。除了 README 里这章节。
+This is an on-screen keyboard shortcut tool built specifically for Vibe Coding. It was inspired by a RedNote user asking for a Vibe Coding shortcut keyboard. With one mouse click, you can quickly input common prompts such as “Help me fix this bug,” “Keep fixing the bug,” “Reply to me in Chinese!”, and “Write the code directly.” All key contents are fully customizable.
 
-目前只在 macOS 13.7 上做了测试。其他进展后续更新。
+The name VibeCoding666 is a blessing for everyone to stay “666” (smooth and awesome) throughout Vibe Coding. This project was also developed fully in a Vibe Coding style, including architectural decisions—except for this section in the README.
 
-## 最新版本
+So far it has only been tested on macOS 13.7 now.
 
-- 当前版本：`v0.3.4`（2026-02-14）
-- 本次更新：修复系统浅色外观下控制按钮与产品标题文字对比度不足的问题，自动切换为与按键文字一致的深色文字，提升可见性
+## Latest Version
 
-## 快速开始
+- Current version: `v0.3.4` (2026-02-14)
+- This update: fixed low contrast of control buttons and product title text under light system appearance by automatically switching to dark text (matching key label color) for better visibility
 
-### 方案一：完整桌面应用（推荐）
+## Quick Start
+
+### Option 1: Full Desktop App (Recommended)
 
 ```bash
 cd VibeCoding666
@@ -25,7 +27,7 @@ npm install
 npm start
 ```
 
-### 方案二：轻量级服务器版
+### Option 2: Lightweight Server Version
 
 ```bash
 cd VibeCoding666/simple
@@ -33,19 +35,19 @@ npm install
 node server.js
 ```
 
-## 功能特性
+## Features
 
-- **自定义按键**：每个按键可自定义显示标签和输入内容
-- **智能排布**：水平排布自动绑定上下边缘吸附，垂直排布自动绑定左右边缘吸附
-- **UI 优化**：针对垂直模式优化的紧凑型标题栏
-- **独立设置**：设置窗口不再随主窗口跳动，操作更稳定
-- **跨平台支持**：macOS (Intel/Apple Silicon)、Windows、Linux
-- **系统级输入**：点击自动输入到当前激活窗口
-- **可配置外观**：调整透明度、窗口置顶
-- **全局快捷键**：`Ctrl/Cmd + Alt + K` 显示/隐藏
-- **配置导入导出**：方便备份和分享
+- **Custom keys**: each key can define its own display label and input content
+- **Smart layout behavior**: horizontal layout auto-binds to top/bottom edge snapping; vertical layout auto-binds to left/right edge snapping
+- **UI optimization**: compact title bar optimized for vertical mode
+- **Independent settings window**: settings no longer jump with the main window, improving stability
+- **Cross-platform support**: macOS (Intel/Apple Silicon), Windows, Linux
+- **System-level input**: click to type into the currently active window
+- **Configurable appearance**: adjust opacity and always-on-top behavior
+- **Global shortcut**: `Ctrl/Cmd + Alt + K` to show/hide
+- **Config import/export**: convenient for backup and sharing
 
-## 系统要求
+## System Requirements
 
 ### macOS
 ```bash
@@ -53,7 +55,7 @@ xcode-select --install
 ```
 
 ### Windows
-以管理员身份运行 PowerShell：
+Run PowerShell as Administrator:
 ```powershell
 npm install --global windows-build-tools
 ```
@@ -68,99 +70,99 @@ sudo apt-get install libxtst-dev libpng++-dev
 sudo dnf install libXtst-devel libpng-devel
 ```
 
-## 安装问题
+## Installation Troubleshooting
 
-如果安装失败，通常是原生模块编译问题：
+If installation fails, it is usually caused by native module build issues:
 
 ```bash
-# 清理缓存
+# Clear cache
 npm cache clean --force
 rm -rf node_modules package-lock.json
 
-# 重新安装
+# Reinstall
 npm install
 ```
 
-## 系统权限与安全提示
+## System Permissions & Security Notes
 
-> ⚠️ 本项目依赖 `robotjs` 进行系统级输入模拟。若点击按键后没有输入，通常不是功能异常，而是被系统权限或安全策略拦截。
+> ⚠️ This project relies on `robotjs` to simulate system-level input. If clicking keys does not type anything, it is usually not a functional bug, but blocked by system permissions or security policies.
 
-### macOS（重点）
+### macOS (Most Important)
 
-首次运行后，请授予“辅助功能”权限：
+After first launch, grant **Accessibility** permission:
 
-1. 打开 **系统设置** → **隐私与安全性** → **辅助功能**
-2. 将运行本项目的程序加入并开启权限：
-	- 开发运行：`Terminal` / `iTerm`（你在哪个终端执行 `npm start`，就给哪个终端授权）
-	- 打包运行：`VibeCoding666.app`
-3. 关闭并重新启动应用
+1. Open **System Settings** → **Privacy & Security** → **Accessibility**
+2. Add and enable the program used to run this project:
+   - Dev run: `Terminal` / `iTerm` (whichever terminal runs `npm start`)
+   - Packaged run: `VibeCoding666.app`
+3. Quit and relaunch the app
 
-若仍无法输入，可继续检查：
+If input still does not work, continue checking:
 
-- **隐私与安全性** → **输入监控**：将对应终端或 `VibeCoding666.app` 加入允许列表后重启应用
-- **隐私与安全性** → **自动化**：若出现相关弹窗，允许控制目标应用
+- **Privacy & Security** → **Input Monitoring**: allow the terminal or `VibeCoding666.app`, then relaunch
+- **Privacy & Security** → **Automation**: if related prompts appear, allow control of target apps
 
 ### Windows
 
-Windows 可能因权限级别或安全软件拦截导致输入失败：
+Input may fail due to privilege level mismatch or security software interception:
 
-1. 右键以“**管理员身份运行**”启动应用（或启动应用的终端）
-2. 若目标程序也是管理员权限，请确保本应用同样以管理员权限运行
-3. 在 Windows Defender/第三方杀软中，将应用目录加入信任或白名单
+1. Start the app (or terminal running it) with **Run as administrator**
+2. If the target app also runs as administrator, ensure this app runs as administrator too
+3. Add the app directory to Windows Defender / third-party antivirus trust or whitelist
 
 ### Linux
 
-Linux 桌面环境差异较大，常见限制如下：
+Linux desktop environments vary a lot. Common limitations:
 
-1. **Wayland** 会话通常限制模拟输入，建议切换到 **X11/Xorg** 会话后再使用
-2. 确认已安装依赖（见上方 Linux 系统要求）
-3. 若通过远程桌面或沙箱环境运行，可能被会话策略拦截，请在本地桌面会话中测试
+1. **Wayland** sessions often restrict input simulation; switch to **X11/Xorg** and try again
+2. Ensure required dependencies are installed (see Linux requirements above)
+3. Remote desktop or sandbox environments may block input through session policies; test in a local desktop session
 
-## 使用说明
+## Usage
 
-1. **显示/隐藏**：快捷键 `Ctrl/Cmd + Alt + K`
-2. **移动位置**：按住标题栏拖动
-3. **自定义按键**：点击 ⚙ 设置按钮
-4. **配置管理**：支持导入/导出 JSON 配置文件
+1. **Show/hide**: shortcut `Ctrl/Cmd + Alt + K`
+2. **Move position**: drag by holding the title bar
+3. **Customize keys**: click the ⚙ settings button
+4. **Config management**: supports JSON config import/export
 
-## 技术栈
+## Tech Stack
 
-- **Electron**: 跨平台桌面框架
-- **robotjs**: 系统级输入模拟
-- **HTML5/CSS3**: 用户界面
+- **Electron**: cross-platform desktop framework
+- **robotjs**: system-level input simulation
+- **HTML5/CSS3**: user interface
 
-## 配置文件位置
+## Config File Location
 
 - macOS: `~/Library/Application Support/VibeCoding666/`
 - Windows: `%APPDATA%/VibeCoding666/`
 - Linux: `~/.config/VibeCoding666/`
 
-## 卸载说明
+## Uninstall
 
 ### Windows
 
-使用安装包自带的卸载程序时，会弹出确认框：
-- 选择 `No`：仅卸载程序，保留用户数据
-- 选择 `Yes`：卸载程序并删除用户数据（配置和自定义按键）
+When using the uninstaller bundled with the installer, a confirmation dialog appears:
+- Select `No`: uninstall app only, keep user data
+- Select `Yes`: uninstall app and delete user data (config and custom keys)
 
 ### macOS
 
-可运行卸载工具：
+Run the uninstall script:
 ```bash
 npm run uninstall:mac
 ```
 
-脚本会先卸载应用，再询问是否清除用户数据（配置和自定义按键）。
+The script first uninstalls the app, then asks whether to remove user data (config and custom keys).
 
 ### Linux
 
-可运行卸载工具：
+Run the uninstall script:
 ```bash
 npm run uninstall:linux
 ```
 
-脚本会先尝试卸载 `vibecoding666` 包（如已安装），再询问是否清除用户数据（配置和自定义按键）。
+The script first tries to remove the `vibecoding666` package (if installed), then asks whether to remove user data (config and custom keys).
 
-## 许可
+## License
 
-MIT（详见 `LICENSE`）
+MIT (see `LICENSE`)
