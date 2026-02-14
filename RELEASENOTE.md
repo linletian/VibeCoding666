@@ -1,3 +1,25 @@
+# v0.3.4 Release Notes
+
+## Overview
+This release improves readability in light appearance by automatically switching title and control button text to darker colors that match key text contrast.
+
+## What's New
+
+### ✨ UX Improvements
+- **Auto light-mode text adaptation**: product title text and top-right control buttons now switch to dark text color under system light appearance
+- **Consistent visual contrast**: control buttons now use light-mode background/hover states for clearer visibility on bright surfaces
+
+### 🐛 Bug Fixes
+- Fixed poor visibility for minimize/config/close controls in light mode
+- Fixed product title text being too faint in light mode on both horizontal and vertical layouts
+
+### 🔨 Modified Files
+- `src/renderer/keyboard.css`
+- `src/renderer/keyboard-horizontal.css`
+- `src/renderer/keyboard-vertical.css`
+
+---
+
 # v0.3.3 Release Notes
 
 ## Overview
