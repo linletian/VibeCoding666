@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- Project mode switched to **personal scaffold**: maintained as a personal macOS scaffold cloned and built locally. The codebase and `package.json` build configuration remain cross-platform compatible (Windows/Linux targets are kept for framework completeness), but only **macOS is actively built and tested** by the maintainer.
+- macOS build target changed from `dmg` to `dir`. The build now produces unpacked `.app` bundles instead of a DMG installer.
+- macOS architecture is now **auto-detected from the build machine** (no explicit `arch` in config). On Intel Mac → `dist/mac/VibeCoding666.app` (x86_64); on Apple Silicon → `dist/mac-arm64/VibeCoding666.app` (arm64). To build the other architecture explicitly, use `npx electron-builder --mac --arm64` or `--x64 --arm64`.
+
+### Removed
+
+- `.github/workflows/release.yml` removed along with the empty `workflows/` directory. The project no longer uses GitHub Actions for automated builds or releases. Local testing (`npm run build:mac` and manual launch) is the verification standard.
+
+### Documentation
+
+- `README.md` and `README_CN.md`: added **Self-Use Scaffold / 自用脚手架** section documenting the local `.app` build path (prerequisites, build & launch, optional `/Applications` install, Gatekeeper handling, Accessibility permissions, config location).
+- `README.md` and `README_CN.md`: added **Option 3 / 方案三** to Quick Start pointing to the new self-use section.
+
+### Housekeeping
+
+- `package.json`: `description` updated to drop the standalone "跨平台" claim; now reads "屏幕软键盘（仅 macOS 主动构建）". Framework-level cross-platform compatibility is still reflected in `build.mac/win/linux` targets.
+- `package.json`: added `build.electronDownload.mirror` (`npmmirror.com`) for faster Electron binary downloads in mainland China. Switch / disable via the `mirror` field; see README §Self-Use Scaffold.
+- `.gitignore`: replaced the single hardcoded filename (`docs/macos-dmg-internal-release-draft-2026-02-14.md`) with the pattern `docs/*-internal-*.md`. Added `.claude/` to ignore Claude Code's per-machine settings.
+- `OPEN_SOURCE_CHECKLIST.md`: archived to `docs/archive/OPEN_SOURCE_CHECKLIST.md`. The project is no longer pursuing open-source release as a goal (see [Unreleased] above); the checklist is preserved as a historical record only.
+
 ## [0.3.4] - 2026-02-14
 
 ### Changed

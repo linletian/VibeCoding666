@@ -10,7 +10,7 @@
 
 项目取名 VibeCoding666 是祝福大家在 Vibe Coding 过程中全程 666。本项目也是全程使用 Vibe Coding 方式开发的，包括架构选型。除了 README 里这章节。
 
-它被设计成兼容 macOS/Windows/Linux，但目前只在 macOS 13.7 上做了测试。
+该框架设计兼容 macOS/Windows/Linux，但维护者目前只在 macOS 13.7 上做了主动构建和测试。
 
 ![Screenshot](docs/screenshot.png)
 
@@ -39,13 +39,17 @@ npm install
 node server.js
 ```
 
+### 方案三：构建本地 .app（自用）
+
+见 [自用脚手架](#自用脚手架macos-本地构建) 章节，构建一个可直接启动的本地 `.app`。无需发布、无需公证。
+
 ## 功能特性
 
 - **自定义按键**：每个按键可自定义显示标签和输入内容
 - **智能排布**：水平排布自动绑定上下边缘吸附，垂直排布自动绑定左右边缘吸附
 - **UI 优化**：针对垂直模式优化的紧凑型标题栏
 - **独立设置**：设置窗口不再随主窗口跳动，操作更稳定
-- **跨平台支持**：macOS (Intel/Apple Silicon)、Windows、Linux
+- **跨平台框架**：macOS (Intel/Apple Silicon)、Windows、Linux —— 仅 macOS 被主动构建和测试
 - **系统级输入**：点击自动输入到当前激活窗口
 - **可配置外观**：调整透明度、窗口置顶
 - **全局快捷键**：`Ctrl/Cmd + Alt + K` 显示/隐藏
@@ -73,6 +77,54 @@ sudo apt-get install libxtst-dev libpng++-dev
 ```bash
 sudo dnf install libXtst-devel libpng-devel
 ```
+
+## 自用脚手架（macOS 本地构建）
+
+本节介绍本机自用的构建路径：克隆、配置、产出一个可直接启动的 `.app`。无发布、无公证、无需上架 App Store —— 只是一个用于本机个人使用的 `.app` 包。
+
+> **范围说明**：本脚手架仅在 **macOS** 上维护。代码与 `package.json` 构建配置保持跨平台兼容（Windows/Linux target 保留以保证框架完整性），但维护者只在 macOS 上主动构建和测试。
+
+### 前置条件
+
+- Node.js ≥ 18
+- Xcode 命令行工具（`xcode-select --install`）
+
+> `package.json` 中 Electron 下载源默认为 `npmmirror.com` 镜像。如需更换，编辑 `build.electronDownload.mirror` 字段（或删除该字段以使用默认源）。
+
+### 构建与启动
+
+```bash
+npm install
+npm run build:mac
+open dist/mac/VibeCoding666.app
+```
+
+`npm run build:mac` 会自动按当前机器的架构构建 —— Intel Mac 产出 `dist/mac/VibeCoding666.app`（x86_64），Apple Silicon 产出 `dist/mac-arm64/VibeCoding666.app`（arm64）。构建产物为解包后的 `.app` 目录（不是 DMG 安装包）。
+
+> 若需显式构建另一种架构（例如在 Intel 上构 arm64），加 flag：`npx electron-builder --mac --arm64`；同时构两种：`npx electron-builder --mac --x64 --arm64`。
+
+### 可选：部署到 /Applications
+
+```bash
+cp -R dist/mac/VibeCoding666.app /Applications/
+```
+
+### 首次启动的 Gatekeeper 提示
+
+由于 `.app` 未签名，首次启动可能出现 Gatekeeper 拦截。选择其中一种方式处理：
+
+- 在 Finder 中右键 `.app` → **打开**，或
+- 一次性执行：`xattr -cr dist/mac/VibeCoding666.app`
+
+### 系统权限
+
+首次启动后，请在 **系统设置 → 隐私与安全性 → 辅助功能** 中允许 `VibeCoding666.app` 本身（不是 Terminal）。完整的故障排查流程见 [系统权限与安全提示](#系统权限与安全提示)。
+
+### 配置位置
+
+`~/Library/Application Support/VibeCoding666/`
+
+删除此目录可彻底重置应用状态。
 
 ## 安装问题
 

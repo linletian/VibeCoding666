@@ -60,3 +60,11 @@ build/Debug/
 # Electron
 release/
 app-update.yml
+
+# Internal / draft files under docs/ (kept out of public release tracking)
+# 内部草稿与过程稿不入库；命名约定：*-internal-*.md
+docs/*-internal-*.md
+
+# Claude Code machine-specific config (per-user permissions, settings)
+# Claude Code 本机配置（权限、白名单等），与代码无关，不入库
+.claude/

@@ -1,7 +1,7 @@
 {
   "name": "vibecoding666",
   "version": "0.3.4",
-  "description": "VibeCoding666 - 跨平台屏幕软键盘，支持自定义按键内容",
+  "description": "VibeCoding666 - 屏幕软键盘（仅 macOS 主动构建），支持自定义按键内容",
   "license": "MIT",
   "author": "VibeCoding666 Contributors",
   "repository": {
@@ -33,6 +33,10 @@
     "directories": {
       "output": "dist"
     },
+    "electronDownload": {
+      "//": "Mirror set to npmmirror.com for faster Electron downloads on mainland China networks. Remove this field to fall back to Electron's default CDN. See README.md §Self-Use Scaffold.",
+      "mirror": "https://npmmirror.com/mirrors/electron/"
+    },
     "files": [
       "src/**/*",
       "assets/**/*",
@@ -41,11 +45,7 @@
     "mac": {
       "target": [
         {
-          "target": "dmg",
-          "arch": [
-            "x64",
-            "arm64"
-          ]
+          "target": "dir"
         }
       ],
       "category": "public.app-category.utilities"

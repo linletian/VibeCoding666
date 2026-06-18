@@ -1,6 +1,8 @@
-# Open Source Release Checklist
+# Open Source Release Checklist (归档)
 
-用于将项目发布到 GitHub 开源的关键任务清单（按优先级）。
+用于将项目发布到 GitHub 开源的关键任务清单（按优先级）。已归档至 `docs/archive/`，仅作历史参考。
+
+> **状态（2026-06-18）：已被取代并归档。** 本清单在项目准备开源发布时创建。现项目已转向"个人脚手架 + 仅 macOS 维护"模式（详见 `CHANGELOG.md` 的 `[Unreleased]`），开源公开发布不再作为目标。下文清单保留作为历史记录，不再主动推进。新维护者无需在此清单上推进任何项。
 
 ## P0 必做（阻塞开源）
 

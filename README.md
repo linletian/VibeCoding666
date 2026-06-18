@@ -10,7 +10,7 @@ This is an on-screen keyboard shortcut tool built specifically for Vibe Coding. 
 
 The name VibeCoding666 is a blessing for everyone to stay “666” (smooth and awesome) throughout Vibe Coding. This project was also developed fully in a Vibe Coding style, including architectural decisions—except for this section in the README.
 
-It is designed to be compatible with macOS/Windows/Linux, but is currently only tested on macOS 13.7.
+The framework is designed to be compatible with macOS/Windows/Linux, but only macOS is actively built and tested by the maintainer (currently on macOS 13.7).
 
 ![Screenshot](docs/screenshot.png)
 
@@ -37,13 +37,17 @@ npm install
 node server.js
 ```
 
+### Option 3: Build Local `.app` (Self-Use)
+
+See [Self-Use Scaffold](#self-use-scaffold-macos-local-build) for building a local `.app` you can launch directly. No publishing, no notarization.
+
 ## Features
 
 - **Custom keys**: each key can define its own display label and input content
 - **Smart layout behavior**: horizontal layout auto-binds to top/bottom edge snapping; vertical layout auto-binds to left/right edge snapping
 - **UI optimization**: compact title bar optimized for vertical mode
 - **Independent settings window**: settings no longer jump with the main window, improving stability
-- **Cross-platform support**: macOS (Intel/Apple Silicon), Windows, Linux
+- **Cross-platform framework**: macOS (Intel/Apple Silicon), Windows, Linux — only macOS is actively built and tested
 - **System-level input**: click to type into the currently active window
 - **Configurable appearance**: adjust opacity and always-on-top behavior
 - **Global shortcut**: `Ctrl/Cmd + Alt + K` to show/hide
@@ -71,6 +75,54 @@ sudo apt-get install libxtst-dev libpng++-dev
 ```bash
 sudo dnf install libXtst-devel libpng-devel
 ```
+
+## Self-Use Scaffold (macOS Local Build)
+
+This section covers the local-use build path: clone, configure, and produce a `.app` you can launch directly. No publishing, no notarization, no App Store submission — just a `.app` bundle for personal use on this machine.
+
+> **Scope**: This scaffold is maintained for **macOS only**. The codebase and `package.json` build configuration remain cross-platform compatible (Windows/Linux targets are retained for framework completeness), but only macOS is actively built and tested.
+
+### Prerequisites
+
+- Node.js ≥ 18
+- Xcode Command Line Tools (`xcode-select --install`)
+
+> The Electron download mirror in `package.json` defaults to `npmmirror.com`. If you need a different mirror, edit `build.electronDownload.mirror` (or remove the field to use the default).
+
+### Build & Launch
+
+```bash
+npm install
+npm run build:mac
+open dist/mac/VibeCoding666.app
+```
+
+`npm run build:mac` automatically detects your machine's architecture — on an Intel Mac it produces `dist/mac/VibeCoding666.app` (x86_64); on Apple Silicon it produces `dist/mac-arm64/VibeCoding666.app` (arm64). The output is an unpacked `.app` bundle (not a DMG installer).
+
+> To build the other architecture explicitly (e.g. produce arm64 on an Intel Mac), pass the flag: `npx electron-builder --mac --arm64`. To build both at once: `npx electron-builder --mac --x64 --arm64`.
+
+### Optional: Install to /Applications
+
+```bash
+cp -R dist/mac/VibeCoding666.app /Applications/
+```
+
+### First-Launch Gatekeeper
+
+The first launch may show a Gatekeeper warning because the `.app` is unsigned. Either:
+
+- Right-click the `.app` in Finder → **Open**, or
+- Run once: `xattr -cr dist/mac/VibeCoding666.app`
+
+### Permissions
+
+On first launch, grant **Accessibility** permission to `VibeCoding666.app` itself (not Terminal) under **System Settings → Privacy & Security → Accessibility**. See [System Permissions & Security Notes](#system-permissions--security-notes) for the full troubleshooting flow.
+
+### Config Location
+
+`~/Library/Application Support/VibeCoding666/`
+
+Delete this directory to fully reset the app's state.
 
 ## Installation Troubleshooting
 
